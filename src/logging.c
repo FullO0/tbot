@@ -40,13 +40,13 @@ void initLogFile()
 		write(STDERR_FILENO, "Error Opening Log File, Setting STDERR as Log\n", 46);
 		logfd = STDERR_FILENO;
 	}
-	LOG_INFO("Starting Tbot Log Session...");
+	LOG_INFO("Starting Tbot Log Session...\n");
 }
 
 void closeLogFile()
 {
 	if (logfd < 0) return; // FIXME: FATAL ERROR, KILL PROGRAM
-	LOG_INFO("Closing Tbot Log Session.");
+	LOG_INFO("Closing Tbot Log Session.\n");
 	close(logfd);
 }
 
