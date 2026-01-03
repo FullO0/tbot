@@ -8,9 +8,6 @@
 #ifndef BOOLEAN_H
 #define BOOLEAN_H
 
-typedef enum boolean {
-	FALSE = 0,
-	TRUE
-} boolean;
+typedef unsigned short int boolean;
 
 #endif
