@@ -18,18 +18,33 @@ BUILD     = build
 BIN       = bin
 LOCALBIN  = ~/.local/bin
 
+OBJECTS =
+
 # Tell make where to find the files
-# vpath %.c src/
-# vpath %.h include/
-# vpath %.o build/
+vpath %.c src/
+vpath %.h include/
+
+# Lists
+EXES = main
+MAIN = error.o logging.o
 
 # Executables
-all: $(SRC)/main.c $(BUILD)/error.o $(BUILD)/logging.o | $(BIN)
-	$(COMPILE) -o $(BIN)/main $^
+$(BIN)/main: main.c $(addprefix $(BUILD)/, $(MAIN)) | $(BIN)
+	$(COMPILE) -o main $^
 
 # Units
-$(BUILD)/error.o: $(SRC)/error.c $(INCLUDE)/error.h | $(INCLUDE)
+$(BUILD)/error.o: error.c error.h | $(BUILD)
 	$(COMPILE) -c $< -o $@
 
-$(BUILD)/logging.o: $(SRC)/logging.c $(INCLUDE)/error.h | $(INCLUDE)
+$(BUILD)/logging.o: logging.c error.h | $(BUILD)
 	$(COMPILE) -c $< -o $@
+
+# PHONY Targets
+.PHONY: all clean
+
+all: $(BIN)/main
+
+clean:
+	$(RM) $(foreach EXEFILE, $(EXES), $(BIN)/$(EXEFILE))
+	$(RM) $(BUILD)/*.o
+	$(RM) -rf $(BIN)/*.dSYM
