@@ -45,9 +45,10 @@ void initLogFile()
 
 void closeLogFile()
 {
-	if (logfd < 0) DIE("Closing Log File");
+	if (logfd < 0) return;
 	LOG_INFO("Closing Tbot Log Session.\n");
 	close(logfd);
+	logfd = -1;
 }
 
 void logm(const char *msgtype, const char *file, int line, const char *format, ...)
@@ -85,4 +86,20 @@ void logm(const char *msgtype, const char *file, int line, const char *format, .
 	//fsync(logfd);  Only Enable if program is crashing
 	if (bwriten < 0) DIE("Log File Write Error");
 	if (bwriten < len) DIE("Log File Write Failed to Fully Write");
+}
+
+/*** Testing Logger ***/
+int main(int argc, char *argv[])
+{
+	initLogFile();
+	initLogFile(); /* Test Opening Mulitple times */
+
+	LOG_INFO("Test Info\n");
+	LOG_DEBUG("Test Debug\n");
+	LOG_WARN("Test Warning\n");
+	LOG_ERROR("Test Error\n");
+	
+	closeLogFile();
+
+	return 0;
 }
