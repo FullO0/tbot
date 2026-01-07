@@ -15,7 +15,6 @@
 #include <fcntl.h>
 #include <stdarg.h>
 #include <stdio.h>
-#include <stdlib.h>
 #include <string.h>
 #include <time.h>
 #include <unistd.h>
@@ -26,12 +25,13 @@
 
 /*** Global Variables ***/
 
-static int logfd;
+static int logfd = -1;
 
 /*** Logging Functions ***/
 
 void initLogFile()
 {
+	if (logfd < 0) return;
 	logfd = open(LOG_FILE_PATH,
 				 O_CREAT | O_WRONLY | O_APPEND,
 				 S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH);
