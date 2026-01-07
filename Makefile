@@ -30,7 +30,7 @@ MAIN = error.o logging.o
 
 # Executables
 $(BIN)/main: main.c $(addprefix $(BUILD)/, $(MAIN)) | $(BIN)
-	$(COMPILE) -o main $^
+	$(COMPILE) -o $@ $^
 
 # Units
 $(BUILD)/error.o: error.c error.h | $(BUILD)
