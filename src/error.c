@@ -23,7 +23,7 @@ void die(const char *filename, int line, const char *fmt, ...)
 	va_list args;
 	va_start(args, fmt);
 	char msgbuf[MAX_MESSAGE_LENGTH];
-	int msglen = vsnprintf(msgbuf, MAX_MESSAGE_LENGTH, fmt, args);
+	vsnprintf(msgbuf, MAX_MESSAGE_LENGTH, fmt, args);
 	va_end(args);
 
 	/* append header together with message */
@@ -60,17 +60,4 @@ void *ecalloc(const char *filename, int line, size_t nmemb, size_t size)
 	void *ptr;
 	if (!(ptr = calloc(nmemb, size))) die(filename, line, "calloc");
 	return ptr;
-}
-
-/*** Testing Error.c ***/
-int main(int argc, char *argv[])
-{
-	char *buf = EMALLOC(MAX_MESSAGE_LENGTH);
-	int *cal = ECALLOC(sizeof(int), 15);
-	buf = EREALLOC(buf, 10);
-	printf("Sizeof buf = %d Should be 10\n", (int) sizeof(buf));
-	printf("Sizeof cal = %d should be 15\n", (int) sizeof(cal));
-	DIE("Testing DIE macro, with no %s error", "errno");
-	errno = 12; DIE("Testing DIE macro, with errno error");
-	return 0;
 }

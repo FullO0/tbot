@@ -20,12 +20,12 @@
 /**
  * Opens the log file for writing.
  */
-void initLogFile();
+void initLogFile(void);
 
 /**
  * Closes the log file
  */
-void closeLogFile();
+void closeLogFile(void);
 
 /**
  * The internal logging function. Do not call directly
