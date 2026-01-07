@@ -23,7 +23,6 @@
 /*** defines ***/
 
 #define LOG_FILE_PATH "/home/christian/tbot.log" /* TODO: Make this dynamic some way */
-#define MAX_MESSAGE_LENGTH 512
 
 /*** Global Variables ***/
 
@@ -46,14 +45,14 @@ void initLogFile()
 
 void closeLogFile()
 {
-	if (logfd < 0) return; // FIXME: FATAL ERROR, KILL PROGRAM
+	if (logfd < 0) DIE("Closing Log File");
 	LOG_INFO("Closing Tbot Log Session.\n");
 	close(logfd);
 }
 
 void logm(const char *msgtype, const char *file, int line, const char *format, ...)
 {
-	if (logfd < 0) return; // FIXME: FATAL ERROR, KILL PROGRAM
+	if (logfd < 0) DIE("Log File Does Not Exist");
 	
 	char buf[MAX_MESSAGE_LENGTH];
 
@@ -65,10 +64,10 @@ void logm(const char *msgtype, const char *file, int line, const char *format, .
 
 	/* Get the color of the header */
 	const char *color;
-	if      (strcmp(msgtype, "DEBUG") == 0)  color = "\x1b[34m";
-	else if (strcmp(msgtype, "INFO") == 0)   color = "\x1b[32m";
-	else if (strcmp(msgtype, "WARN") == 0)   color = "\x1b[33m";
-	else if (strcmp(msgtype, "ERROR") == 0)  color = "\x1b[31m";
+	if      (strcmp(msgtype, "DEBUG") == 0)  color = ASCII_BLUE;
+	else if (strcmp(msgtype, "INFO") == 0)   color = ASCII_GREEN;
+	else if (strcmp(msgtype, "WARN") == 0)   color = ASCII_BOLD_YELLOW;
+	else if (strcmp(msgtype, "ERROR") == 0)  color = ASCII_BOLD_RED;
 
 	/* Form header */
 	int headlen = snprintf(buf, MAX_MESSAGE_LENGTH, "%s[%s] [%s] %s:%d",
@@ -84,6 +83,6 @@ void logm(const char *msgtype, const char *file, int line, const char *format, .
 	/* Write to Log file */
 	int bwriten = write(logfd, buf, len);
 	//fsync(logfd);  Only Enable if program is crashing
-	if (bwriten < 0) return; // FIXME: FATAL ERROR
-	if (bwriten < len) return; // FIXME: TRUNCATION ERROR
+	if (bwriten < 0) DIE("Log File Write Error");
+	if (bwriten < len) DIE("Log File Write Failed to Fully Write");
 }
