@@ -8,6 +8,7 @@
 /*** Includes ***/
 
 #include "../include/logging.h"
+#include "../include/error.h"
 
 /*** System Includes ***/
 
