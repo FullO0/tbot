@@ -22,20 +22,23 @@ int main(int argc, char *argv[])
 
 	FILE *in;
 	char *filename;
-	if (argc != 2) goto error_file;
-	else filename = argv[1];
+
+	if (argc != 2)  goto error_file;
+	else            filename = argv[1];
+
 	if (!(in = fopen(filename, "r"))) goto error_file;
 
 	char level[10], msg[1024];
 	initLogFile();
 	while (1) {
 		if (fscanf(in, "%s %[^\n]", level, msg) != 2) goto error_input;
-		if (!(strcmp("DEBUG", level))) LOG_DEBUG("%s\n", msg);
-		else if (!(strcmp("INFO", level))) LOG_INFO("%s\n", msg);
-		else if (!(strcmp("WARN", level))) LOG_WARN("%s\n", msg);
+
+		if      (!(strcmp("DEBUG", level))) LOG_DEBUG("%s\n", msg);
+		else if (!(strcmp("INFO", level)))  LOG_INFO("%s\n", msg);
+		else if (!(strcmp("WARN", level)))  LOG_WARN("%s\n", msg);
 		else if (!(strcmp("ERROR", level))) LOG_ERROR("%s\n", msg);
-		else if (!(strcmp("END", level))) goto exit;
-		else goto error_input;
+		else if (!(strcmp("END", level)))   goto exit;
+		else                                goto error_input;
 	}
 
 exit:
