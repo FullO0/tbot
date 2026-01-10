@@ -31,9 +31,9 @@ static int logfd = -1;
 
 void initLogFile(void)
 {
-	if (logfd < 0) return;
+	if (logfd > 0) return;
 	logfd = open(LOG_FILE_PATH,
-				 O_CREAT | O_WRONLY | O_APPEND,
+				 O_CREAT | O_WRONLY | O_TRUNC,
 				 S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH);
 
 	if (logfd < 0) {
@@ -67,11 +67,11 @@ void logm(const char *msgtype, const char *file, int line, const char *format, .
 	const char *color;
 	if      (strcmp(msgtype, "DEBUG") == 0)  color = ASCII_BLUE;
 	else if (strcmp(msgtype, "INFO") == 0)   color = ASCII_GREEN;
-	else if (strcmp(msgtype, "WARN") == 0)   color = ASCII_BOLD_YELLOW;
-	else if (strcmp(msgtype, "ERROR") == 0)  color = ASCII_BOLD_RED;
+	else if (strcmp(msgtype, "WARN") == 0)   color = ASCII_YELLOW;
+	else if (strcmp(msgtype, "ERROR") == 0)  color = ASCII_RED;
 
 	/* Form header */
-	int headlen = snprintf(buf, MAX_MESSAGE_LENGTH, "%s[%s] [%s] %s:%d",
+	int headlen = snprintf(buf, MAX_MESSAGE_LENGTH, "%s[%s] [%s] [%s:%d]\x1b[0m ",
 						   color, timebuf, msgtype, file, line);
 
 	/* Format the message with the variadiac arguments */
