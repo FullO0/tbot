@@ -3,7 +3,8 @@
 DEBUG     = -ggdb
 OPTIMISE  = -O0
 WARNINGS  = -Wall -Wextra -Wno-variadic-macros -Wno-overlength-strings -pedantic
-CFLAGS    = $(DEBUG) $(OPTIMISE) $(WARNINGS)
+REMSRC    = -fmacro-prefix-map=src/=
+CFLAGS    = $(DEBUG) $(OPTIMISE) $(WARNINGS) $(REMSRC)
 
 # commands
 CC        = clang
@@ -25,11 +26,19 @@ vpath %.c src/
 vpath %.h include/
 
 # Lists
-EXES = main
+EXES = main test_error test_logger
 MAIN = error.o logging.o
+ERROR = error.o
+LOGGER = logging.o error.o
 
 # Executables
 $(BIN)/main: main.c $(addprefix $(BUILD)/, $(MAIN)) | $(BIN)
+	$(COMPILE) -o $@ $^
+
+$(BIN)/test_error: test_error.c $(addprefix $(BUILD)/, $(ERROR)) | $(BIN)
+	$(COMPILE) -o $@ $^
+
+$(BIN)/test_logger: test_logger.c $(addprefix $(BUILD)/, $(LOGGER)) | $(BIN)
 	$(COMPILE) -o $@ $^
 
 # Units
@@ -40,9 +49,11 @@ $(BUILD)/logging.o: logging.c error.h | $(BUILD)
 	$(COMPILE) -c $< -o $@
 
 # PHONY Targets
-.PHONY: all clean
+.PHONY: all clean test_error test_logger
 
 all: $(BIN)/main
+test_error: $(BIN)/test_error
+test_logger: $(BIN)/test_logger
 
 clean:
 	$(RM) $(foreach EXEFILE, $(EXES), $(BIN)/$(EXEFILE))
