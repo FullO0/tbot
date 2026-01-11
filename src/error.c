@@ -40,24 +40,3 @@ void die(const char *filename, int line, const char *fmt, ...)
 	}
 	exit(EXIT_FAILURE);
 }
-
-void *emalloc(const char *filename, int line, size_t size)
-{
-	void *ptr;
-	if (!(ptr = malloc(size))) die(filename, line, "malloc");
-	return ptr;
-}
-
-void *erealloc(const char *filename, int line, void *ptr, size_t size)
-{
-	void *p;
-	if (!(p = realloc(ptr, size))) die(filename, line, "realloc");
-	return p;
-}
-
-void *ecalloc(const char *filename, int line, size_t nmemb, size_t size)
-{
-	void *ptr;
-	if (!(ptr = calloc(nmemb, size))) die(filename, line, "calloc");
-	return ptr;
-}
