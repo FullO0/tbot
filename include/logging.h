@@ -15,6 +15,11 @@
 #define LOG_WARN(...) logm("WARN", __FILE__, __LINE__, __VA_ARGS__)
 #define LOG_ERROR(...) logm("ERROR", __FILE__, __LINE__, __VA_ARGS__)
 
+/*** Global variables ***/
+
+/* Variable to check if the log file is Open */
+extern int isOpen;
+
 /*** Function prototypes ***/
 
 /**
