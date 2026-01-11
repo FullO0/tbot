@@ -23,9 +23,13 @@
 
 #define LOG_FILE_PATH "/home/christian/tbot.log" /* TODO: Make this dynamic some way */
 
-/*** Global Variables ***/
+/*** File Variables ***/
 
 static int logfd = -1;
+
+/*** Global variables ***/
+
+int isOpen = 0;
 
 /*** Logging Functions ***/
 
@@ -40,6 +44,7 @@ void initLogFile(void)
 		write(STDERR_FILENO, "Error Opening Log File, Setting STDERR as Log\n", 46);
 		logfd = STDERR_FILENO;
 	}
+	isOpen = 1;
 	LOG_INFO("Starting Tbot Log Session...\n");
 }
 
@@ -48,6 +53,7 @@ void closeLogFile(void)
 	if (logfd < 0) return;
 	LOG_INFO("Closing Tbot Log Session.\n");
 	close(logfd);
+	isOpen = 0;
 	logfd = -1;
 }
 
