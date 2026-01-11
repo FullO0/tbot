@@ -1,0 +1,6 @@
+ERROR Can't write, not initialized
+WARN Can't write, not initialized
+DEBUG Can't write, not initialized
+INFO Can't write, not initialized
+CLOSE
+END
