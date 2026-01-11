@@ -12,6 +12,11 @@
 
 #include <stdio.h>
 
+/*** Defines ***/
+
+/* Helper Macro to get a specific value in the matrix */
+#define GET(mat, x, y) mat->vals[x + y * mat->ncols]
+
 /*** Constants ***/
 
 /*** Type Definitions ***/
@@ -20,7 +25,7 @@ typedef struct {
 	int nrows;
 	int ncols;
 	double *vals;
-	double *rows;
+	double **rows;
 } Matrix;
 
 /*** Function Prototypes ***/
@@ -30,7 +35,8 @@ typedef struct {
  *
  * @param[in] nrows
  * @param[in] ncols
- *     The dimension of the given matrix
+ *     The dimension of the given matrix, the function assumes 
+ *     that ncols * nrows = length of data array
  * @param[in] len
  *     The length of the given data array
  * @param[in] *data
@@ -40,9 +46,10 @@ typedef struct {
  *     the data array by row or by column
  * @return
  *     Returns the pointer to the new matrix
+ *     the matrix->vals will always be sorted by row
  *     NULL if there is an error
  */
-Matrix *initmat(int nrows, int ncols, int len, double *data, int byrow);
+Matrix *innitmat(int nrows, int ncols, int len, const double *data, int byrow);
 
 /**
  * Free the Matrix.
