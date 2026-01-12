@@ -37,8 +37,6 @@ typedef struct {
  * @param[in] ncols
  *     The dimension of the given matrix, the function assumes 
  *     that ncols * nrows = length of data array
- * @param[in] len
- *     The length of the given data array
  * @param[in] *data
  *     The pointer to the array of data to construct the matrix
  * @param[in] byrow
@@ -49,7 +47,7 @@ typedef struct {
  *     the matrix->vals will always be sorted by row
  *     NULL if there is an error
  */
-Matrix *innitmat(int nrows, int ncols, int len, const double *data, int byrow);
+Matrix *innitmat(int nrows, int ncols, const double *data, int byrow);
 
 /**
  * Free the Matrix.
@@ -57,7 +55,7 @@ Matrix *innitmat(int nrows, int ncols, int len, const double *data, int byrow);
  * @param[in] mat
  *     The matrix to free
  */
-void freemat(Matrix mat);
+void freemat(Matrix *mat);
 
 /**
  * Do standard matrix addition on the given matrices.

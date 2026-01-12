@@ -9,6 +9,7 @@
 
 #include "../include/matrix.h"
 #include "../include/error.h"
+#include "../include/logging.h"
 
 /*** System Includes ***/
 
@@ -23,6 +24,8 @@
 
 Matrix *innitmat(int nrows, int ncols, const double *data, int byrow)
 {
+	LOG_INFO("Creating a %dx%d Matrix...\n", nrows, ncols);
+
 	/* Allocate memory for the matrix struct */
 	Matrix *mat = malloc(sizeof(Matrix));
 	if (!mat) DIE("malloc");
@@ -39,26 +42,42 @@ Matrix *innitmat(int nrows, int ncols, const double *data, int byrow)
 	mat->ncols = ncols;
 	mat->nrows = nrows;
 
+	LOG_DEBUG("Copying data...\n");
 	int i;
 	if (!data) {
 		/* Set values to zero if no data was given */
+		LOG_DEBUG("No data, creating zero matrix\n");
 		memset(vals, 0, bsize);
 
 	} else if (byrow) {
 		/* Copy values directly by row */
+		LOG_DEBUG("Reading by row from data\n");
 		memcpy(vals, data, bsize);
 
 	} else {
 		/* Copy values by column so that it is stored by row */
-		int j, idx;
-		for (i = 0; i < ncols; i++)
-			for (j = 0; j < nrows; j++)
-				vals[idx++] = data[i * ncols + j];
+		LOG_DEBUG("Reading by column from data\n");
+		int j, idx = 0;
+		for (i = 0; i < nrows; i++)
+			for (j = 0; j < ncols; j++)
+				vals[idx++] = data[j * ncols + i];
 	}
+	mat->vals = vals;
 
 	/* Get row pointers */
+	LOG_DEBUG("Creating row pointer array\n");
 	for (i = 0; i < nrows; i++)
 		rows[i] = (vals + (i * ncols));
+	mat->rows = rows;
 
+	LOG_INFO("Succesfully created matrix\n");
 	return mat;
 }
+
+void freemat(Matrix *mat)
+{
+	free(mat->vals);
+	free(mat->rows);
+	free(mat);
+}
+
