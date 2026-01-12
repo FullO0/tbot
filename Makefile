@@ -29,7 +29,8 @@ vpath %.h include/
 EXES = main test_error test_logger
 MAIN = error.o logging.o
 ERROR = error.o
-LOGGER = logging.o error.o
+LOGGER = error.o logging.o
+MATRIX = error.o logging.o matrix.o
 
 # Executables
 $(BIN)/main: main.c $(addprefix $(BUILD)/, $(MAIN)) | $(BIN)
@@ -41,6 +42,9 @@ $(BIN)/test_error: test_error.c $(addprefix $(BUILD)/, $(ERROR)) | $(BIN)
 $(BIN)/test_logger: test_logger.c $(addprefix $(BUILD)/, $(LOGGER)) | $(BIN)
 	$(COMPILE) -o $@ $^
 
+$(BIN)/test_matrix: test_matrix.c $(addprefix $(BUILD)/, $(MATRIX)) | $(BIN)
+	$(COMPILE) -o $@ $^
+
 # Units
 $(BUILD)/error.o: error.c error.h | $(BUILD)
 	$(COMPILE) -c $< -o $@
@@ -48,12 +52,16 @@ $(BUILD)/error.o: error.c error.h | $(BUILD)
 $(BUILD)/logging.o: logging.c error.h | $(BUILD)
 	$(COMPILE) -c $< -o $@
 
+$(BUILD)/matrix.o: matrix.c matrix.h error.h logging.h | $(BUILD)
+	$(COMPILE) -c $< -o $@
+
 # PHONY Targets
-.PHONY: all clean test_error test_logger
+.PHONY: all clean test_error test_logger test_matrix
 
 all: $(BIN)/main
 test_error: $(BIN)/test_error
 test_logger: $(BIN)/test_logger
+test_matrix: $(BIN)/test_matrix
 
 clean:
 	$(RM) $(foreach EXEFILE, $(EXES), $(BIN)/$(EXEFILE))
