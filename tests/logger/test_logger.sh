@@ -45,6 +45,10 @@ for filepath in $INDIR/*.in; do
 			echo -e "\x1b[31mFAIL\x1b[m in .err file"
 			((fail++))
 		fi
+
+		# Clear tbot.log for next test
+		rm -rf ~/tbot.log
+		touch ~/tbot.log
 	fi
 done
 
