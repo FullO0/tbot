@@ -59,7 +59,7 @@ void closeLogFile(void)
 
 void logm(const char *msgtype, const char *file, int line, const char *format, ...)
 {
-	if (isOpen) return;
+	if (!isOpen) return;
 	
 	char buf[MAX_MESSAGE_LENGTH];
 

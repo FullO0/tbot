@@ -18,7 +18,6 @@
 
 int main(int argc, char *argv[])
 {
-
 	FILE *in;
 	char *filename;
 
@@ -32,12 +31,12 @@ int main(int argc, char *argv[])
 
 		/* No Message */
 		if (fscanf(in, "%s", level) != 1)   goto error_input;
-		if      (!(strcmp("INNIT", level))) initLogFile();
-		else if (!(strcmp("CLOSE", level))) closeLogFile();
+		if      (!(strcmp("INNIT", level))) { initLogFile(); continue; }
+		else if (!(strcmp("CLOSE", level))) { closeLogFile(); continue; }
 		else if (!(strcmp("END", level)))   goto exit;
 
 		/* message */
-		if (fscanf(in, "%[^\n]", msg) != 1) goto error_input;
+		if (fscanf(in, " %[^\n]", msg) != 1) goto error_input;
 		if      (!(strcmp("DEBUG", level))) LOG_DEBUG("%s\n", msg);
 		else if (!(strcmp("INFO", level)))  LOG_INFO("%s\n", msg);
 		else if (!(strcmp("WARN", level)))  LOG_WARN("%s\n", msg);
