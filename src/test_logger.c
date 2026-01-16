@@ -30,7 +30,7 @@ int main(int argc, char *argv[])
 	char level[10], msg[1024];
 	while (1) {
 
-		/* Level */
+		/* No Message */
 		if (fscanf(in, "%s", level) != 1)   goto error_input;
 		if      (!(strcmp("INNIT", level))) initLogFile();
 		else if (!(strcmp("CLOSE", level))) closeLogFile();

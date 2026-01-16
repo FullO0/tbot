@@ -17,6 +17,7 @@ SRC       = src
 INCLUDE   = include
 BUILD     = build
 BIN       = bin
+TEST      = tests
 LOCALBIN  = ~/.local/bin
 
 OBJECTS =
@@ -41,6 +42,7 @@ $(BIN)/test_error: test_error.c $(addprefix $(BUILD)/, $(ERROR)) | $(BIN)
 
 $(BIN)/test_logger: test_logger.c $(addprefix $(BUILD)/, $(LOGGER)) | $(BIN)
 	$(COMPILE) -o $@ $^
+	$(TEST)/logger/test_logger.sh $(TEST)/logger $@
 
 $(BIN)/test_matrix: test_matrix.c $(addprefix $(BUILD)/, $(MATRIX)) | $(BIN)
 	$(COMPILE) -o $@ $^

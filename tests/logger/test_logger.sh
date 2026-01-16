@@ -1,24 +1,18 @@
 #!/bin/bash
+############################################################################
+# DO NOT RUN THIS MANUALLY, RUN BY COMPILING test_logger WITH THE MAKEFILE #
+############################################################################
 
-ROOT="../.."
-INDIR="./in"
-OUTDIR="./out"
-EXPDIR="./exp"
-ERRDIR="./err"
-EXEC="$ROOT/bin/test_logger"
+TESTDIR="$1"
+EXEC="$2"
+INDIR="$TESTDIR/in"
+OUTDIR="$TESTDIR/out"
+EXPDIR="$TESTDIR/exp"
+ERRDIR="$TESTDIR/err"
 pass=0
 fail=0
 
 FAKETIME="2000-01-01 00:00:00"
-
-# Check if compiler exits
-if [ ! -f "$EXEC" ]; then
-	echo -e "\033[33mtest_logger does not exist, making test_logger..."
-	cd "$ROOT/"
-	make test_logger
-	cd "./tests/logger/"
-	echo -n -e "\x1b[m"
-fi
 
 # Save log file
 cp ~/tbot.log ".tbot.log.tmp"
