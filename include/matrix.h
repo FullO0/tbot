@@ -63,13 +63,15 @@ void freemat(Matrix *mat);
  * @param[in] mat
  * @param[in] other
  *     The two minimum amount of matrices needed
+ * @param[in] count
+ *     The amount of extra matrices you want to add
  * @param[in] ...
  *     The rest of the matrices you want to add together
  * @return
  *     Returns the result as a pointer to a new Matrix
  *     NULL if there is an error
  */
-Matrix *matadd(Matrix mat, Matrix other, ...);
+Matrix *matadd(const Matrix *mat, const Matrix *other, int count, ...);
 
 /**
  * Do standard matrix multiplication on all the matrices in order.

@@ -9,6 +9,20 @@
 
 #include "../include/matrix.h"
 #include "../include/logging.h"
+#include "../include/test_data_matrix.h"
+
+/*** Helper Functions ***/
+
+void printmat(Matrix *mat)
+{
+	int i, j;
+	printf("Matrix: %dx%d\n", mat->nrows, mat->ncols);
+	for (i = 0; i < mat->nrows; i++) {
+		for (j = 0; j < mat->ncols; j++)
+			printf(" %.2f ", GET(mat, j, i));
+		printf("\n");
+	}
+}
 
 /*** Testing ***/
 
@@ -17,21 +31,23 @@ int main(void)
 	initLogFile();
 
 	/*** innitmat ***/
-	double tdata[] = {1.1, 2.2, 3.3, 4.4};
-	Matrix *rmat = innitmat(2, 2, tdata, 1); /* By Column */
-	Matrix *cmat = innitmat(2, 2, tdata, 0); /* By Row */
-	Matrix *nmat = innitmat(2, 2, NULL, 0); /* No Data */
+	Matrix *amat = innitmat(SHAPE_A[0], SHAPE_A[1], TEST_DATA_A, 1);
+	Matrix *bmat = innitmat(SHAPE_B[0], SHAPE_B[1], TEST_DATA_B, 1);
+	Matrix *cmat = innitmat(SHAPE_C[0], SHAPE_C[1], TEST_DATA_C, 1);
 
 	int i;
-	printf("tdata array values: \n");
-	for (i = 0; i < 4; i++) printf("%f ", tdata[i]);
-	printf("\nMat stored values by row: \n");
-	for (i = 0; i < 4; i++) printf("%f ", rmat->vals[i]);
-	printf("\nMat stored values by column: \n");
-	for (i = 0; i < 4; i++) printf("%f ", cmat->vals[i]);
-	printf("\nMat stored values with no data: \n");
-	for (i = 0; i < 4; i++) printf("%f ", nmat->vals[i]);
-	printf("\n");
+	printf("\nMat A stored values: \n");
+	for (i = 0; i < amat->nrows*amat->ncols; i++) printf("%.2f ", amat->vals[i]);
+	printf("\nMat B stored values: \n");
+	for (i = 0; i < bmat->nrows*bmat->ncols; i++) printf("%.2f ", bmat->vals[i]);
+	printf("\nMat C stored values: \n");
+	for (i = 0; i < cmat->nrows*cmat->ncols; i++) printf("%.2f ", cmat->vals[i]);
+	printf("\n\n");
+
+	/*** addition ***/
+	printmat(amat);
+	printmat(bmat);
+	printmat(cmat);
 
 	closeLogFile();
 }

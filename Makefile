@@ -20,8 +20,6 @@ BIN       = bin
 TEST      = tests
 LOCALBIN  = ~/.local/bin
 
-OBJECTS =
-
 # Tell make where to find the files
 vpath %.c src/
 vpath %.h include/
@@ -44,8 +42,10 @@ $(BIN)/test_logger: test_logger.c $(addprefix $(BUILD)/, $(LOGGER)) | $(BIN)
 	$(COMPILE) -o $@ $^
 	$(TEST)/logger/test_logger.sh $(TEST)/logger $@
 
-$(BIN)/test_matrix: test_matrix.c $(addprefix $(BUILD)/, $(MATRIX)) | $(BIN)
+$(BIN)/test_matrix: test_matrix.c $(PYTHON_EXE) $(addprefix $(BUILD)/, $(MATRIX)) | $(BIN)
+	$(PYTHON_EXE) $(TEST)/matrix/gen_test_data.py
 	$(COMPILE) -o $@ $^
+	$@
 
 # Units
 $(BUILD)/error.o: error.c error.h | $(BUILD)
@@ -56,6 +56,19 @@ $(BUILD)/logging.o: logging.c error.h | $(BUILD)
 
 $(BUILD)/matrix.o: matrix.c matrix.h error.h logging.h | $(BUILD)
 	$(COMPILE) -c $< -o $@
+
+# PYTHON
+
+PYTHON_EXE=.venv/bin/python
+
+$(PYTHON_EXE):
+	@echo "ERROR: can't find Venv Python executable!"
+	@echo "Please run: make setup_venv!"
+	@exit 1
+
+setup_venv:
+	python -m venv .venv
+	$(PYTHON_EXE) -m pip install -r requirements.txt
 
 # PHONY Targets
 .PHONY: all clean test_error test_logger test_matrix

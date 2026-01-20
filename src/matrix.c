@@ -13,12 +13,22 @@
 
 /*** System Includes ***/
 
+#include <stdarg.h>
 #include <stdlib.h>
 #include <string.h>
+#include <assert.h>
 
 /*** Defines ***/
 
 /*** Helper Functions ***/
+
+/*** Row Operations ***/
+
+void addrow(double *res, const double *row, const double *other, int rowlen)
+{
+	for (int i = 0; i < rowlen; i++)
+		res[i] = row[i] + other[i];
+}
 
 /*** Public Functions ***/
 
@@ -79,5 +89,29 @@ void freemat(Matrix *mat)
 	free(mat->vals);
 	free(mat->rows);
 	free(mat);
+}
+
+Matrix *matadd(const Matrix *mat, const Matrix *other, int count, ...)
+{
+	assert(mat->nrows == other->nrows && mat->ncols == other->ncols);
+	Matrix *res = innitmat(mat->nrows, mat->ncols, NULL, 0);
+	Matrix *temp;
+
+	/* First two matrices */
+	int i, j;
+	for (i = 0; i < res->nrows; i++)
+		addrow(res->rows[i], mat->rows[i], other->rows[i], res->ncols);
+
+	/* The rest of the matrices */
+	va_list args;
+	va_start(args, count);
+	for (j = 0; j < count; j++) {
+		temp = va_arg(args, Matrix *);
+		assert(res->nrows == temp->nrows && res->ncols == temp->ncols);
+		for (i = 0; i < res->nrows; i++)
+			addrow(res->rows[i], res->rows[i], temp->rows[i], res->ncols);
+	}
+
+	return res;
 }
 
