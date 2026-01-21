@@ -70,7 +70,7 @@ Matrix *innitmat(int nrows, int ncols, const double *data, int byrow)
 		int j, idx = 0;
 		for (i = 0; i < nrows; i++)
 			for (j = 0; j < ncols; j++)
-				vals[idx++] = data[j * ncols + i];
+				vals[idx++] = data[j * nrows + i];
 	}
 	mat->vals = vals;
 
