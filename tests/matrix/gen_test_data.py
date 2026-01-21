@@ -28,7 +28,6 @@ def write_array(file, arr):
 
 
 def main():
-
     rng = np.random.default_rng()
 
     with open(TEST_DATA_FILE, "w", encoding="utf-8") as f:
@@ -42,10 +41,10 @@ def main():
         data_B = rng.normal(0, 100, shape_B[0] * shape_B[1])
         data_C = rng.normal(0, 100, shape_C[0] * shape_C[1])
 
-        # the array but ordered as Column-Major
-        fdata_A = np.asfortranarray(data_A)
-        fdata_B = np.asfortranarray(data_B)
-        fdata_C = np.asfortranarray(data_C)
+        # Turn data into a matrix
+        mat_A = np.ndarray(shape_A, data_A.dtype, data_A)
+        mat_B = np.ndarray(shape_B, data_B.dtype, data_B)
+        mat_C = np.ndarray(shape_C, data_C.dtype, data_C)
 
         # Write data to header file
         f.write(TESTDATA)
@@ -70,17 +69,16 @@ def main():
 
         f.write("\n")
 
+        # Write Data as Column-Major
         f.write("const double TEST_FDATA_A[] = { ")
-        write_array(f, fdata_A)
+        write_array(f, mat_A.flatten("F"))
         f.write(" };\n")
         f.write("const double TEST_FDATA_B[] = { ")
-        write_array(f, fdata_B)
+        write_array(f, mat_B.flatten("F"))
         f.write(" };\n")
         f.write("const double TEST_FDATA_C[] = { ")
-        write_array(f, fdata_C)
+        write_array(f, mat_B.flatten("F"))
         f.write(" };\n")
-
-        # Turn data into a matrix
 
         # Initialization Results
 
