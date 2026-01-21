@@ -9,7 +9,7 @@
 
 #include "../include/matrix.h"
 #include "../include/logging.h"
-#include "../include/test_data_matrix.h"
+#include "../include/test_data_matrix.h" /* run gen_test_data.py to create this */
 #include "../include/error.h"
 
 #include <string.h>
