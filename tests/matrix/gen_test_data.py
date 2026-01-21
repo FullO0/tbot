@@ -77,7 +77,7 @@ def main():
         write_array(f, mat_B.flatten("F"))
         f.write(" };\n")
         f.write("const double TEST_FDATA_C[] = { ")
-        write_array(f, mat_B.flatten("F"))
+        write_array(f, mat_C.flatten("F"))
         f.write(" };\n")
 
         # Initialization Results
