@@ -39,7 +39,7 @@ for filepath in $INDIR/*.in; do
 
 		# Check exit status for diff
 		if [ $? -eq 0 ]; then
-			echo -e "\x1b[32mPASSED\x1b[m"
+			echo -e "\x1b[32mPASS\x1b[m"
 			((pass++))
 		else
 			echo -e "\x1b[31mFAIL\x1b[m in .err file"
