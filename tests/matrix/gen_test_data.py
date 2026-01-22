@@ -18,7 +18,12 @@ HEADER = """/**
  * @date    20/01/2026
 */\n"""
 TESTDATA = "\n/*** Test Data ***/\n\n"
+INIT = "\n/*** Initialization Test Results ***/\n\n"
 ADDITION = "\n/*** Addition Test Results ***/\n\n"
+MULTIPLICATION = "\n/*** Multiplication Test Results ***/\n\n"
+TRANSPOSE = "\n/*** Transpose Test Results ***/\n\n"
+INVERSE = "\n/*** Inverse Test Results ***/\n\n"
+RREF = "\n/*** Reduced Row Echolon Form Test Results ***/\n\n"
 
 
 def write_array(file, arr):
@@ -34,17 +39,19 @@ def main():
         f.write(HEADER)
 
         # Get the random arrays
-        shape_A = (2, 5)
+        shape_A = (200, 500)
         shape_B = shape_A
-        shape_C = (4, 5)
+        shape_C = (400, 500)
         data_A = rng.normal(0, 100, shape_A[0] * shape_A[1])
         data_B = rng.normal(0, 100, shape_B[0] * shape_B[1])
         data_C = rng.normal(0, 100, shape_C[0] * shape_C[1])
 
         # Turn data into a matrix
+        stime = time.perf_counter()
         mat_A = np.ndarray(shape_A, data_A.dtype, data_A)
         mat_B = np.ndarray(shape_B, data_B.dtype, data_B)
         mat_C = np.ndarray(shape_C, data_C.dtype, data_C)
+        init_t = time.perf_counter() - stime
 
         # Write data to header file
         f.write(TESTDATA)
@@ -80,7 +87,27 @@ def main():
         write_array(f, mat_C.flatten("F"))
         f.write(" };\n")
 
-        # Initialization Results
+        # Matrix init testing
+        f.write(INIT)
+        f.write("const double INIT_T = " + str(round(init_t, 4)) + ";\n")
+
+        # Matrix addtion
+        stime = time.perf_counter()
+        mat_A_plus_B = mat_A + mat_B
+        mat_C_plus_C = mat_C + mat_C
+        add_t = time.perf_counter() - stime
+
+        f.write(ADDITION)
+        f.write("const double MAT_A_P_B[] = { ")
+        write_array(f, mat_A_plus_B.flatten())
+        f.write(" };\n")
+        f.write("const double MAT_C_P_C[] = { ")
+        write_array(f, mat_C_plus_C.flatten())
+        f.write(" };\n")
+
+        f.write("\n")
+
+        f.write("const double ADD_T = " + str(round(add_t, 4)) + ";\n")
 
         # Write addition results
 
