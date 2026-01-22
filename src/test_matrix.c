@@ -112,7 +112,24 @@ int main(void)
 	else                                             { PASS(0.0); }
 
 	/*** addition ***/
-	printf("Testing addition...");
+	Matrix *mat_apb, *mat_cpc, *mat_apbpapb;
+	mat_apb = innitmat(amat->nrows, amat->ncols, NULL, 1);
+	mat_cpc = innitmat(cmat->nrows, cmat->ncols, NULL, 1);
+	mat_apbpapb = innitmat(amat->nrows, amat->ncols, NULL, 1);
+
+	stime = clock();
+	matadd(mat_apb, 2, amat, bmat);
+	matadd(mat_cpc, 2, cmat, cmat);
+	matadd(mat_apbpapb, 4, amat, bmat, amat, bmat);
+	etime = clock();
+	cdiff = (etime - stime) / CLOCKS_PER_SEC;
+
+	printf("Testing valid addition...");
+	if      (memcmp(mat_apb->vals, MAT_A_P_B, alen)) { FAIL(mat_cpc, MAT_A_P_B); }
+	else if (memcmp(mat_cpc->vals, MAT_C_P_C, clen)) { FAIL(mat_apb, MAT_C_P_C); }
+	else                                             { PASS(cdiff); }
+
+	/*** multiplication ***/
 
 	/*** total ***/
 	printf("%s%d/%d PASSED%s", ASCII_GREEN, npass, npass + nfail, ASCII_RESET);

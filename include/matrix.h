@@ -60,18 +60,17 @@ void freemat(Matrix *mat);
 /**
  * Do standard matrix addition on the given matrices.
  *
- * @param[in] mat
- * @param[in] other
- *     The two minimum amount of matrices needed
+ * @param[in] res
+ *     The Matrix where the results of the addtion will be stored
  * @param[in] count
- *     The amount of extra matrices you want to add
+ *     The amount of matrices you want to add
  * @param[in] ...
- *     The rest of the matrices you want to add together
+ *     The matrices you want to add to res
  * @return
- *     Returns the result as a pointer to a new Matrix
- *     NULL if there is an error
+ *     returns the amount of matrices added successfully,
+ *     -1 if there was an error
  */
-Matrix *matadd(const Matrix *mat, const Matrix *other, int count, ...);
+int matadd(Matrix *res, int count, ...);
 
 /**
  * Do standard matrix multiplication on all the matrices in order.

@@ -41,10 +41,12 @@ def main():
         # Get the random arrays
         shape_A = (200, 500)
         shape_B = shape_A
-        shape_C = (400, 500)
+        shape_C = (500, 400)
+        shape_D = (400, 300)
         data_A = rng.normal(0, 100, shape_A[0] * shape_A[1])
         data_B = rng.normal(0, 100, shape_B[0] * shape_B[1])
         data_C = rng.normal(0, 100, shape_C[0] * shape_C[1])
+        data_D = rng.normal(0, 100, shape_D[0] * shape_D[1])
 
         # Turn data into a matrix
         stime = time.perf_counter()
@@ -52,6 +54,7 @@ def main():
         mat_B = np.ndarray(shape_B, data_B.dtype, data_B)
         mat_C = np.ndarray(shape_C, data_C.dtype, data_C)
         init_t = time.perf_counter() - stime
+        mat_D = np.ndarray(shape_D, data_D.dtype, data_D)
 
         # Write data to header file
         f.write(TESTDATA)
@@ -61,6 +64,8 @@ def main():
         f.write(str(shape_B[0]) + ", " + str(shape_B[1]) + " };\n")
         f.write("const int SHAPE_C[] = { ")
         f.write(str(shape_C[0]) + ", " + str(shape_C[1]) + " };\n")
+        f.write("const int SHAPE_D[] = { ")
+        f.write(str(shape_D[0]) + ", " + str(shape_D[1]) + " };\n")
 
         f.write("\n")
 
@@ -72,6 +77,9 @@ def main():
         f.write(" };\n")
         f.write("const double TEST_DATA_C[] = { ")
         write_array(f, data_C)
+        f.write(" };\n")
+        f.write("const double TEST_DATA_D[] = { ")
+        write_array(f, data_D)
         f.write(" };\n")
 
         f.write("\n")
@@ -89,7 +97,7 @@ def main():
 
         # Matrix init testing
         f.write(INIT)
-        f.write("const double INIT_T = " + str(round(init_t, 4)) + ";\n")
+        f.write("const double INIT_T = " + str(round(init_t, 11)) + ";\n")
 
         # Matrix addtion
         stime = time.perf_counter()
@@ -107,7 +115,7 @@ def main():
 
         f.write("\n")
 
-        f.write("const double ADD_T = " + str(round(add_t, 4)) + ";\n")
+        f.write("const double ADD_T = " + str(round(add_t, 12)) + ";\n")
 
         # Write addition results
 

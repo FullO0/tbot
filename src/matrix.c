@@ -91,27 +91,24 @@ void freemat(Matrix *mat)
 	free(mat);
 }
 
-Matrix *matadd(const Matrix *mat, const Matrix *other, int count, ...)
+int matadd(Matrix *res, int count, ...)
 {
-	assert(mat->nrows == other->nrows && mat->ncols == other->ncols);
-	Matrix *res = innitmat(mat->nrows, mat->ncols, NULL, 0);
-	Matrix *temp;
-
-	/* First two matrices */
-	int i, j;
-	for (i = 0; i < res->nrows; i++)
-		addrow(res->rows[i], mat->rows[i], other->rows[i], res->ncols);
-
-	/* The rest of the matrices */
+	Matrix *other;
 	va_list args;
+	int i, j;
+
+	/* loop over all matrices */
 	va_start(args, count);
 	for (j = 0; j < count; j++) {
-		temp = va_arg(args, Matrix *);
-		assert(res->nrows == temp->nrows && res->ncols == temp->ncols);
-		for (i = 0; i < res->nrows; i++)
-			addrow(res->rows[i], res->rows[i], temp->rows[i], res->ncols);
-	}
+		other = va_arg(args, Matrix *);
 
-	return res;
+		/* Do matrix addition */
+		assert(res->nrows == other->nrows && res->ncols == other->ncols);
+		for (i = 0; i < res->nrows; i++)
+			addrow(res->rows[i], res->rows[i], other->rows[i], res->ncols);
+	}
+	va_end(args);
+
+	return count;
 }
 
