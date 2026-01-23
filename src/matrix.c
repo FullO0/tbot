@@ -32,7 +32,7 @@ void addrow(double *res, const double *row, const double *other, int rowlen)
 
 /*** Public Functions ***/
 
-Matrix *innitmat(int nrows, int ncols, const double *data, int byrow)
+Matrix *initmat(int nrows, int ncols, const double *data, int byrow)
 {
 	LOG_INFO("Creating a %dx%d Matrix...\n", nrows, ncols);
 

@@ -47,7 +47,7 @@ typedef struct {
  *     the matrix->vals will always be sorted by row
  *     NULL if there is an error
  */
-Matrix *innitmat(int nrows, int ncols, const double *data, int byrow);
+Matrix *initmat(int nrows, int ncols, const double *data, int byrow);
 
 /**
  * Free the Matrix.

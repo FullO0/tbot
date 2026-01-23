@@ -19,8 +19,8 @@
 
 /*** Defines ***/
 
-#define OUTPUT_FILE "./tests/matrix/out.txt"
-#define EXPECTED_FILE "./tests/matrix/exp.txt"
+#define OUTPUT_FILE "./tests/matrix/out.out"
+#define EXPECTED_FILE "./tests/matrix/exp.out"
 
 #define FAIL(out, exp) nfail++; printf("%sFAIL%s\n", ASCII_RED, ASCII_RESET); \
 printMat(out, 1); printArrAsMat(exp, out->nrows, out->ncols, 0)
@@ -83,21 +83,21 @@ int main(void)
 
 	printf("\nTesting matrix.c...\n");
 
-	/*** innitmat ***/
+	/*** initmat ***/
 	int alen = SHAPE_A[0] * SHAPE_A[1];
 	int blen = SHAPE_B[0] * SHAPE_B[1];
 	int clen = SHAPE_C[0] * SHAPE_C[1];
 
 	stime = clock();
-	Matrix *amat = innitmat(SHAPE_A[0], SHAPE_A[1], TEST_DATA_A, 1);
-	Matrix *bmat = innitmat(SHAPE_B[0], SHAPE_B[1], TEST_DATA_B, 1);
-	Matrix *cmat = innitmat(SHAPE_C[0], SHAPE_C[1], TEST_DATA_C, 1);
+	Matrix *amat = initmat(SHAPE_A[0], SHAPE_A[1], TEST_DATA_A, 1);
+	Matrix *bmat = initmat(SHAPE_B[0], SHAPE_B[1], TEST_DATA_B, 1);
+	Matrix *cmat = initmat(SHAPE_C[0], SHAPE_C[1], TEST_DATA_C, 1);
 	etime = clock();
 	cdiff = (etime - stime) / CLOCKS_PER_SEC;
 
-	Matrix *afmat = innitmat(SHAPE_A[0], SHAPE_A[1], TEST_FDATA_A, 0);
-	Matrix *bfmat = innitmat(SHAPE_B[0], SHAPE_B[1], TEST_FDATA_B, 0);
-	Matrix *cfmat = innitmat(SHAPE_C[0], SHAPE_C[1], TEST_FDATA_C, 0);
+	Matrix *afmat = initmat(SHAPE_A[0], SHAPE_A[1], TEST_FDATA_A, 0);
+	Matrix *bfmat = initmat(SHAPE_B[0], SHAPE_B[1], TEST_FDATA_B, 0);
+	Matrix *cfmat = initmat(SHAPE_C[0], SHAPE_C[1], TEST_FDATA_C, 0);
 
 	printf("Testing reading in data... ");
 	if      (memcmp(amat->vals, TEST_DATA_A, alen)) { FAIL(amat, TEST_DATA_A); }
@@ -112,15 +112,13 @@ int main(void)
 	else                                             { PASS(0.0); }
 
 	/*** addition ***/
-	Matrix *mat_apb, *mat_cpc, *mat_apbpapb;
-	mat_apb = innitmat(amat->nrows, amat->ncols, NULL, 1);
-	mat_cpc = innitmat(cmat->nrows, cmat->ncols, NULL, 1);
-	mat_apbpapb = innitmat(amat->nrows, amat->ncols, NULL, 1);
+	Matrix *mat_apb, *mat_cpc;
+	mat_apb = initmat(amat->nrows, amat->ncols, NULL, 1);
+	mat_cpc = initmat(cmat->nrows, cmat->ncols, NULL, 1);
 
 	stime = clock();
 	matadd(mat_apb, 2, amat, bmat);
 	matadd(mat_cpc, 2, cmat, cmat);
-	matadd(mat_apbpapb, 4, amat, bmat, amat, bmat);
 	etime = clock();
 	cdiff = (etime - stime) / CLOCKS_PER_SEC;
 

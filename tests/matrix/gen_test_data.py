@@ -105,6 +105,7 @@ def main():
         mat_C_plus_C = mat_C + mat_C
         add_t = time.perf_counter() - stime
 
+        # Write addition results
         f.write(ADDITION)
         f.write("const double MAT_A_P_B[] = { ")
         write_array(f, mat_A_plus_B.flatten())
@@ -116,8 +117,6 @@ def main():
         f.write("\n")
 
         f.write("const double ADD_T = " + str(round(add_t, 12)) + ";\n")
-
-        # Write addition results
 
         f.write(ADDITION)
 
