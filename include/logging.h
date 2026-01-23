@@ -10,10 +10,17 @@
 
 /*** Definitions ***/
 
-#define LOG_INFO(...) logm("INFO", __FILE__, __LINE__, __VA_ARGS__)
-#define LOG_DEBUG(...) logm("DEBUG", __FILE__, __LINE__, __VA_ARGS__)
-#define LOG_WARN(...) logm("WARN", __FILE__, __LINE__, __VA_ARGS__)
-#define LOG_ERROR(...) logm("ERROR", __FILE__, __LINE__, __VA_ARGS__)
+#ifdef DEUBG_MODE
+	#define LOG_INFO(...) logm("INFO", __FILE__, __LINE__, __VA_ARGS__)
+	#define LOG_DEBUG(...) logm("DEBUG", __FILE__, __LINE__, __VA_ARGS__)
+	#define LOG_WARN(...) logm("WARN", __FILE__, __LINE__, __VA_ARGS__)
+	#define LOG_ERROR(...) logm("ERROR", __FILE__, __LINE__, __VA_ARGS__)
+#else
+	#define LOG_INFO(...)
+	#define LOG_DEBUG(...)
+	#define LOG_WARN(...)
+	#define LOG_ERROR(...)
+#endif
 
 /*** Global variables ***/
 
