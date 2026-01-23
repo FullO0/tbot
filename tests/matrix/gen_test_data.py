@@ -42,7 +42,7 @@ def main():
         shape_A = (200, 500)
         shape_B = shape_A
         shape_C = (500, 400)
-        shape_D = (400, 300)
+        shape_D = (400, 200)
         data_A = rng.normal(0, 100, shape_A[0] * shape_A[1])
         data_B = rng.normal(0, 100, shape_B[0] * shape_B[1])
         data_C = rng.normal(0, 100, shape_C[0] * shape_C[1])
@@ -53,8 +53,8 @@ def main():
         mat_A = np.ndarray(shape_A, data_A.dtype, data_A)
         mat_B = np.ndarray(shape_B, data_B.dtype, data_B)
         mat_C = np.ndarray(shape_C, data_C.dtype, data_C)
-        init_t = time.perf_counter() - stime
         mat_D = np.ndarray(shape_D, data_D.dtype, data_D)
+        init_t = time.perf_counter() - stime
 
         # Write data to header file
         f.write(TESTDATA)
@@ -103,7 +103,8 @@ def main():
         stime = time.perf_counter()
         mat_A_plus_B = mat_A + mat_B
         mat_C_plus_C = mat_C + mat_C
-        add_t = time.perf_counter() - stime
+        etime = time.perf_counter()
+        add_t = etime - stime
 
         # Write addition results
         f.write(ADDITION)
@@ -118,7 +119,36 @@ def main():
 
         f.write("const double ADD_T = " + str(round(add_t, 12)) + ";\n")
 
-        f.write(ADDITION)
+        # Matrix multiplication
+        stime = time.perf_counter()
+        mat_A_mul_C = np.matmul(mat_A, mat_C)
+        mat_B_mul_C = np.matmul(mat_B, mat_C)
+        mat_C_mul_D = np.matmul(mat_C, mat_D)
+        mat_D_mul_A = np.matmul(mat_D, mat_A)
+        mat_D_mul_B = np.matmul(mat_D, mat_B)
+        etime = time.perf_counter()
+        mult_t = etime - stime
+
+        f.write(MULTIPLICATION)
+        f.write("const double MAT_A_M_C[] = { ")
+        write_array(f, mat_A_mul_C.flatten())
+        f.write(" };\n")
+        f.write("const double MAT_B_M_C[] = { ")
+        write_array(f, mat_B_mul_C.flatten())
+        f.write(" };\n")
+        f.write("const double MAT_C_M_D[] = { ")
+        write_array(f, mat_C_mul_D.flatten())
+        f.write(" };\n")
+        f.write("const double MAT_D_M_A[] = { ")
+        write_array(f, mat_D_mul_A.flatten())
+        f.write(" };\n")
+        f.write("const double MAT_D_M_B[] = { ")
+        write_array(f, mat_D_mul_B.flatten())
+        f.write(" };\n")
+
+        f.write("\n")
+
+        f.write("const double MUL_T = " + str(round(mult_t, 12)) + ";\n")
 
 
 main()

@@ -74,19 +74,18 @@ int matadd(Matrix *res, int count, ...);
 
 /**
  * Do standard matrix multiplication on all the matrices in order.
- * If the input is mat1, mat2, mat3 then assume it will multiply in that
- * order.
+ * Assume order will be mat1 * mat2 ...
  *
- * @param[in] mat
- * @param[in] other
- *     The two minimum amount of matrices needed
- * @param[in] ...
- *     The rest of the matrices you want to multiply together
+ * @param[in] res
+ *     The matrix to store the results in
+ * @param[in] mat1
+ * @param[in] mat2
+ *     The two matrices you're multipling
  * @return
- *     Returns the result as a pointer to a new Matrix
- *     NULL if there is an error
+ *     Returns the amount of matrices successfully multiplied together
+ *     -1 if there was any error
  */
-Matrix *matmult(Matrix mat, Matrix other, ...);
+int matmult(Matrix *res, Matrix *mat1, Matrix *mat2);
 
 /**
  * Get the transpose of a matrix

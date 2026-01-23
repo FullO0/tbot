@@ -22,14 +22,6 @@
 
 /*** Helper Functions ***/
 
-/*** Row Operations ***/
-
-void addrow(double *res, const double *row, const double *other, int rowlen)
-{
-	for (int i = 0; i < rowlen; i++)
-		res[i] = row[i] + other[i];
-}
-
 /*** Public Functions ***/
 
 Matrix *initmat(int nrows, int ncols, const double *data, int byrow)
@@ -93,22 +85,56 @@ void freemat(Matrix *mat)
 
 int matadd(Matrix *res, int count, ...)
 {
+	LOG_INFO("Adding together %d matrices of dimensions %dx%d...\n",
+			  count, res->nrows, res->ncols);
+
 	Matrix *other;
 	va_list args;
-	int i, j;
+	int i, n, size;
 
 	/* loop over all matrices */
+	size = res->ncols * res->nrows;
 	va_start(args, count);
-	for (j = 0; j < count; j++) {
+	for (n = 0; n < count; n++) {
+		LOG_DEBUG("Adding matrix %d\n", n + 1);
 		other = va_arg(args, Matrix *);
 
-		/* Do matrix addition */
+		/* Do matrix addition TODO: Maby write this in assembly?*/
 		assert(res->nrows == other->nrows && res->ncols == other->ncols);
-		for (i = 0; i < res->nrows; i++)
-			addrow(res->rows[i], res->rows[i], other->rows[i], res->ncols);
+		for (i = 0; i < size; i++)
+			res->vals[i] += other->vals[i];
 	}
 	va_end(args);
+	LOG_INFO("Finished adding together %d matrices\n", count);
 
 	return count;
 }
 
+int matmult(Matrix *res, Matrix *mat1, Matrix *mat2)
+{
+	LOG_INFO("Multiplying matrices of size %dx%d and %dx%d together...\n", 
+			 mat1->nrows, mat1->ncols, mat2->nrows, mat2->ncols);
+
+	int r, c, x, y;
+	double ri, sum;
+
+	/* TODO: Can try and write this in assembly */
+	assert(mat1->nrows == res->nrows && mat2->ncols == res->ncols);
+	for (x = 0; x < res->ncols; x++) {
+		for (y = 0; y < res->nrows; y++){
+
+			LOG_DEBUG("Calculating element (%d, %d) of result matrix\n", x, y);
+
+			/* Row and col dot product */
+			sum = 0;
+			for (r = 0; mat1->ncols; r++) {
+				ri = GET(mat1, r, y);
+				for (c = 0; mat2->nrows; c++) {
+					sum += ri * GET(mat2, x, c);
+				}
+			}
+			GET(res, x, y) = sum;
+		}
+	}
+	LOG_INFO("Finished multiplying together matrices\n");
+}
