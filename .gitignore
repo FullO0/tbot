@@ -1,2 +1,2 @@
 tests/**/err/
-**/test_data_matrix.h
+include/test_data_matrix.h
