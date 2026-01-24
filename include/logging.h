@@ -10,7 +10,7 @@
 
 /*** Definitions ***/
 
-#ifdef DEUBG_MODE
+#ifdef DEBUG_MODE
 	#define LOG_INFO(...) logm("INFO", __FILE__, __LINE__, __VA_ARGS__)
 	#define LOG_DEBUG(...) logm("DEBUG", __FILE__, __LINE__, __VA_ARGS__)
 	#define LOG_WARN(...) logm("WARN", __FILE__, __LINE__, __VA_ARGS__)
