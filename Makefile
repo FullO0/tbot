@@ -4,6 +4,7 @@ DEBUG     = -ggdb
 OPTIMISE  = -O0
 WARNINGS  = -Wall -Wextra -Wno-variadic-macros -Wno-overlength-strings -pedantic
 REMSRC    = -fmacro-prefix-map=src/=
+DFLAGS    = -DNDEBUG
 CFLAGS    = $(DEBUG) $(OPTIMISE) $(WARNINGS) $(REMSRC)
 
 # commands
@@ -25,15 +26,15 @@ vpath %.c src/
 vpath %.h include/
 
 # Lists
-EXES = main test_error test_logger
-MAIN = error.o logging.o
-ERROR = error.o
+EXES   = main test_error test_logger
+MAIN   = error.o logging.o
+ERROR  = error.o
 LOGGER = error.o logging.o
 MATRIX = error.o logging.o matrix.o
 
 # Executables
 $(BIN)/main: main.c $(addprefix $(BUILD)/, $(MAIN)) | $(BIN)
-	$(COMPILE) -o $@ $^
+	$(COMPILE) $(DFLAGS) -o $@ $^
 
 $(BIN)/test_error: test_error.c $(addprefix $(BUILD)/, $(ERROR)) | $(BIN)
 	$(COMPILE) -o $@ $^
