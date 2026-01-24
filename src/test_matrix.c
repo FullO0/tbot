@@ -19,8 +19,6 @@
 
 /*** Defines ***/
 
-#define DEBUG_MODE
-
 #define OUTPUT_FILE "./tests/matrix/out.out"
 #define EXPECTED_FILE "./tests/matrix/exp.out"
 

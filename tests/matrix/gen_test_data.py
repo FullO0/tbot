@@ -39,10 +39,10 @@ def main():
         f.write(HEADER)
 
         # Get the random arrays
-        shape_A = (200, 500)
+        shape_A = (2, 5)
         shape_B = shape_A
-        shape_C = (500, 400)
-        shape_D = (400, 200)
+        shape_C = (5, 4)
+        shape_D = (4, 2)
         data_A = rng.normal(0, 100, shape_A[0] * shape_A[1])
         data_B = rng.normal(0, 100, shape_B[0] * shape_B[1])
         data_C = rng.normal(0, 100, shape_C[0] * shape_C[1])

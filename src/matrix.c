@@ -115,8 +115,8 @@ int matmult(Matrix *res, Matrix *mat1, Matrix *mat2)
 	LOG_INFO("Multiplying matrices of size %dx%d and %dx%d together...\n", 
 			 mat1->nrows, mat1->ncols, mat2->nrows, mat2->ncols);
 
-	int r, c, x, y;
-	double ri, sum;
+	int r, x, y;
+	double sum;
 
 	/* TODO: Can try and write this in assembly */
 	assert(mat1->nrows == res->nrows && mat2->ncols == res->ncols);
@@ -127,14 +127,16 @@ int matmult(Matrix *res, Matrix *mat1, Matrix *mat2)
 
 			/* Row and col dot product */
 			sum = 0;
-			for (r = 0; mat1->ncols; r++) {
-				ri = GET(mat1, r, y);
-				for (c = 0; mat2->nrows; c++) {
-					sum += ri * GET(mat2, x, c);
-				}
+			LOG_DEBUG("sum = %.2f\n", sum);
+			for (r = 0; r < mat1->ncols; r++) {
+				LOG_DEBUG("sum += %.2f * %.2f\n", GET(mat1, r, y), GET(mat2, x, r));
+				sum += GET(mat1, r, y) * GET(mat2, x, r);
 			}
+			LOG_INFO("Element (%d, %d) = %.2f\n", x, y, sum);
 			GET(res, x, y) = sum;
 		}
 	}
 	LOG_INFO("Finished multiplying together matrices\n");
+
+	return EXIT_SUCCESS;
 }
