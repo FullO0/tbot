@@ -70,6 +70,24 @@ void printArrAsMat(const double *arr, int nrows, int ncols, int out)
 	}
 }
 
+int matcmp(const Matrix *mat1, const Matrix *mat2)
+{
+	if ((mat1->nrows != mat2->nrows) || (mat1->ncols != mat2->ncols)) return -1;
+
+	int size = mat1->nrows * mat1->ncols;
+
+	int i, j, cmp;
+	for (i = 0; i < mat1->nrows; i++) {
+		for (j = 0; j < mat1->ncols; j++) {
+			if (!(cmp = memcmp(&GET(mat1, j, i), &GET(mat2, j, i), sizeof(double)))) {
+				return cmp;
+			}
+		}
+	}
+
+	return 0;
+}
+
 /*** Testing ***/
 
 int main(void)
