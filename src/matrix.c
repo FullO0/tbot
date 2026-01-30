@@ -110,7 +110,7 @@ int matadd(Matrix *res, int count, ...)
 	return count;
 }
 
-int matmult(Matrix *res, Matrix *mat1, Matrix *mat2)
+int matmult(Matrix *res, const Matrix *mat1, const Matrix *mat2)
 {
 	LOG_INFO("Multiplying matrices of size %dx%d and %dx%d together...\n", 
 			 mat1->nrows, mat1->ncols, mat2->nrows, mat2->ncols);

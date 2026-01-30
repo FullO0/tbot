@@ -150,5 +150,43 @@ def main():
 
         f.write("const double MUL_T = " + str(round(mult_t, 12)) + ";\n")
 
+        # Matrix transpose
+        stime = time.perf_counter()
+        mat_A_T = mat_A.transpose()
+        mat_B_T = mat_B.transpose()
+        mat_C_T = mat_C.transpose()
+        mat_D_T = mat_D.transpose()
+        etime = time.perf_counter()
+        t_t = etime - stime
+
+        f.write(TRANSPOSE)
+        f.write("const int SHAPE_A_T[] = { ")
+        f.write(str(shape_A[1]) + ", " + str(shape_A[0]) + " };\n")
+        f.write("const int SHAPE_B_T[] = { ")
+        f.write(str(shape_B[1]) + ", " + str(shape_B[0]) + " };\n")
+        f.write("const int SHAPE_C_T[] = { ")
+        f.write(str(shape_C[1]) + ", " + str(shape_C[0]) + " };\n")
+        f.write("const int SHAPE_D_T[] = { ")
+        f.write(str(shape_D[1]) + ", " + str(shape_D[0]) + " };\n")
+
+        f.write("\n")
+
+        f.write("const double MAT_A_T[] = { ")
+        write_array(f, mat_A_T.flatten())
+        f.write(" };\n")
+        f.write("const double MAT_B_T[] = { ")
+        write_array(f, mat_B_T.flatten())
+        f.write(" };\n")
+        f.write("const double MAT_C_T[] = { ")
+        write_array(f, mat_C_T.flatten())
+        f.write(" };\n")
+        f.write("const double MAT_D_T[] = { ")
+        write_array(f, mat_D_T.flatten())
+        f.write(" };\n")
+
+        f.write("\n")
+
+        f.write("const double T_T = " + str(round(t_t, 12)) + ";\n")
+
 
 main()

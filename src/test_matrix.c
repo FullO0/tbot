@@ -180,6 +180,16 @@ int main(void)
 	else if (memcmp(mat_dmb->vals, MAT_D_M_B, dblen)) { FAIL(mat_dmb, MAT_D_M_B); }
 	else                                              { PASS((MUL_T - cdiff)); }
 
+	/*** Transpose ***/
+	Matrix *amatt = initmat(amat->nrows, amat->ncols, NULL, 1);
+	Matrix *bmatt = initmat(bmat->nrows, bmat->ncols, NULL, 1);
+	Matrix *cmatt = initmat(cmat->nrows, cmat->ncols, NULL, 1);
+	Matrix *dmatt = initmat(dmat->nrows, dmat->ncols, NULL, 1);
+	int at = matT(amatt, amat);
+	int bt = matT(bmatt, bmat);
+	int ct = matT(cmatt, cmat);
+	int dt = matT(dmatt, dmat);
+
 	/*** total ***/
 	printf("%s%d/%d PASSED%s", ASCII_GREEN, npass, npass + nfail, ASCII_RESET);
 	closeLogFile();

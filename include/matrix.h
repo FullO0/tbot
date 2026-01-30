@@ -85,17 +85,19 @@ int matadd(Matrix *res, int count, ...);
  *     Returns the amount of matrices successfully multiplied together
  *     -1 if there was any error
  */
-int matmult(Matrix *res, Matrix *mat1, Matrix *mat2);
+int matmult(Matrix *res, const Matrix *mat1, const Matrix *mat2);
 
 /**
  * Get the transpose of a matrix
  *
+ * @param[in] res
+ *     The matrix to store the new data in
  * @param[in] mat
  *     The matrix to be transposed
  * @return
  *     Returns the resulting transposed matrix as a pointer
  */
-Matrix *matT(Matrix mat);
+int matT(Matrix *res, const Matrix *mat);
 
 /**
  * Gets the rank of the Matrix
