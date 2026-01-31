@@ -140,3 +140,21 @@ int matmult(Matrix *res, const Matrix *mat1, const Matrix *mat2)
 
 	return EXIT_SUCCESS;
 }
+
+int matT(Matrix *res, const Matrix *mat)
+{
+	LOG_INFO("Transposing Matrix of size %dx%d...\n", mat->nrows, mat->ncols);
+	assert((mat->nrows == res->nrows) && (mat->nrows == res->nrows));
+
+	int x, y, idx = 0;
+	for (x = 0; x < mat->ncols; x++) {
+		for (y = 0; y < mat->nrows; y++) {
+			LOG_DEBUG("res->vals[%d] = %.2f, with` mat (%d, %d)\n",
+					  idx, GET(mat, x, y), x, y);
+			res->vals[idx++] = GET(mat, x, y);
+		}
+	}
+
+	LOG_INFO("Finished transposing matrix\n");
+	return EXIT_SUCCESS;
+}

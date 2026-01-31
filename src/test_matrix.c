@@ -185,10 +185,20 @@ int main(void)
 	Matrix *bmatt = initmat(bmat->nrows, bmat->ncols, NULL, 1);
 	Matrix *cmatt = initmat(cmat->nrows, cmat->ncols, NULL, 1);
 	Matrix *dmatt = initmat(dmat->nrows, dmat->ncols, NULL, 1);
-	int at = matT(amatt, amat);
-	int bt = matT(bmatt, bmat);
-	int ct = matT(cmatt, cmat);
-	int dt = matT(dmatt, dmat);
+	stime = clock();
+	matT(amatt, amat);
+	matT(bmatt, bmat);
+	matT(cmatt, cmat);
+	matT(dmatt, dmat);
+	etime = clock();
+	cdiff = (etime - stime) / CLOCKS_PER_SEC;
+
+	printf("Testing transposing...");
+	if      (memcmp(amatt->vals, MAT_A_T, alen)) { FAIL(amatt, MAT_A_T); }
+	else if (memcmp(bmatt->vals, MAT_B_T, blen)) { FAIL(amatt, MAT_B_T); }
+	else if (memcmp(bmatt->vals, MAT_B_T, blen)) { FAIL(amatt, MAT_B_T); }
+	else if (memcmp(bmatt->vals, MAT_B_T, blen)) { FAIL(amatt, MAT_B_T); }
+	else                                          { PASS(cdiff); }
 
 	/*** total ***/
 	printf("%s%d/%d PASSED%s", ASCII_GREEN, npass, npass + nfail, ASCII_RESET);
