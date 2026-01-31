@@ -100,47 +100,60 @@ int matmult(Matrix *res, const Matrix *mat1, const Matrix *mat2);
 int matT(Matrix *res, const Matrix *mat);
 
 /**
- * Gets the rank of the Matrix
- *
- * @param[in] mat
- *     The matrix to find the rank of
- * @return
- *     The rank of the given matrix
- */
-int matrank(Matrix mat);
-
-/**
  * Get the Reduced Row Echolon Form of the given matrix.
  * Using the Gauss-Jordan elimination method.
  *
+ * @param[in] res
+ *     The results the matrix will be placed in
+ *     if NULL it will just work out the rank of the mat
  * @param[in] mat
  *     The matrix to get the rref from
  * @return
- *     Returns the results as a pointer to a new Matrix
- *     NULL if there is an error
+ *     The rank of the matrix,
+ *     Less than zero for an error
  */
-Matrix *rref(Matrix max);
+int rref(Matrix *res, Matrix *max);
+
+/**
+ * Solves the equation Ax = y for y
+ * where A:mxn x:nx1 y:nx1
+ *
+ * @param[in] mat
+ *     The A matrix
+ * @param[in] vec
+ *     The x vector
+ * @param[in] res
+ *     The y vector to be solved
+ * @return
+ *     Returns 0 on success
+ *     Anything less than 0 for an error
+ */
+int solve(Matrix *mat, double *vec, double *res);
 
 /**
  * Get the inverse of a Matrix
  *
+ * @param[in] res
+ *     The results the matrix will be placed in
  * @param[in] mat
  *     The matrix to find a inverse for
  * @return 
- *     Returns the resulting inverse Matrix as a pointer
- *     NULL if there is an error
+ *     Returns 0 for success
+ *     Anything less than 0 for an error
  */
-Matrix *matinv(Matrix mat);
+int matinv(Matrix *res, Matrix *mat);
 
 /**
  * Gets the Moore-Penrose psuodoinverse Matrix
  *
+ * @param[in] res
+ *     The results the matrix will be placed in
  * @param[in] mat
  *     The matrix to get the psuodoinverse from
  * @return
- *     Returns the resulting Matrix as a pointer
- *     NULL if there is an error
+ *     Return 0 for success
+ *     Anything less than 0 for an error
  */
-Matrix *matginv(Matrix mat, int inplace);
+int matginv(Matrix *res, Matrix *mat);
 
 #endif /* MATRIX_H */
