@@ -25,7 +25,6 @@ typedef struct {
 	int nrows;
 	int ncols;
 	double *vals;
-	double **rows;
 } Matrix;
 
 /*** Function Prototypes ***/

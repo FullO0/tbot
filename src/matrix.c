@@ -66,12 +66,6 @@ Matrix *initmat(int nrows, int ncols, const double *data, int byrow)
 	}
 	mat->vals = vals;
 
-	/* Get row pointers */
-	LOG_DEBUG("Creating row pointer array\n");
-	for (i = 0; i < nrows; i++)
-		rows[i] = (vals + (i * ncols));
-	mat->rows = rows;
-
 	LOG_INFO("Succesfully created matrix\n");
 	return mat;
 }
@@ -79,7 +73,6 @@ Matrix *initmat(int nrows, int ncols, const double *data, int byrow)
 void freemat(Matrix *mat)
 {
 	free(mat->vals);
-	free(mat->rows);
 	free(mat);
 }
 
@@ -157,4 +150,11 @@ int matT(Matrix *res, const Matrix *mat)
 
 	LOG_INFO("Finished transposing matrix\n");
 	return EXIT_SUCCESS;
+}
+
+int rref(Matrix *res, Matrix *mat)
+{
+	int rank = -1;
+
+	return rank;
 }
