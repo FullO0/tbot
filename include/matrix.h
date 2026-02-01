@@ -19,6 +19,8 @@
 
 /*** Constants ***/
 
+#define EPSILON 1e-9
+
 /*** Type Definitions ***/
 
 typedef struct {
@@ -102,16 +104,13 @@ int matT(Matrix *res, const Matrix *mat);
  * Get the Reduced Row Echolon Form of the given matrix.
  * Using the Gauss-Jordan elimination method.
  *
- * @param[in] res
- *     The results the matrix will be placed in
- *     if NULL it will just work out the rank of the mat
  * @param[in] mat
- *     The matrix to get the rref from
+ *     The matrix to use rref on
  * @return
  *     The rank of the matrix,
  *     Less than zero for an error
  */
-int rref(Matrix *res, Matrix *max);
+int rref(Matrix *max);
 
 /**
  * Solves the equation Ax = y for y

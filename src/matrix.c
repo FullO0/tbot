@@ -13,14 +13,61 @@
 
 /*** System Includes ***/
 
+#include <math.h>
 #include <stdarg.h>
+#include <stddef.h>
 #include <stdlib.h>
 #include <string.h>
 #include <assert.h>
 
 /*** Defines ***/
 
+#define SWAP(temp, row1, row2) temp = *row1; *row1 = *row2; *row2 = temp
+
 /*** Helper Functions ***/
+
+/* Row index starts at 0 */
+static inline void swapRow(const Matrix *mat, int r1, int r2, int ignore)
+{
+	assert((mat->nrows > r1) && (mat->nrows > r2));
+	assert((r1 >= 0) && (r2 >- 0));
+	if (r1 == r2) return;
+
+	int elements = mat->ncols - ignore;
+	double temp[elements];
+	double *row1 = &GET(mat, ignore, r1);
+	double *row2 = &GET(mat, ignore, r2);
+	size_t copy_size = sizeof(double) * (elements);
+
+	memcpy(temp, row1, copy_size);
+	memcpy(row1, row2, copy_size);
+	memcpy(row2, temp, copy_size);
+}
+
+static inline void scaleAddToRow(const Matrix *mat, int r1, double k, int r2, int ignore)
+{
+	assert((mat->nrows > r1) && (mat->nrows > r2));
+	assert((r1 >= 0) && (r2 >- 0));
+	assert((r1 != r2));
+
+	double * restrict row1 = &GET(mat, ignore, r1);
+	double * restrict row2 = &GET(mat, ignore, r1);
+	int i;
+	for (i = ignore; i < mat->ncols; i++) {
+		row1[i] += k * row2[i];
+	}
+}
+
+static inline void scaleRow(const Matrix *mat, int r, double k, int ignore)
+{
+	assert((mat->nrows > r) && (r >= 0));
+
+	double * restrict row = &GET(mat, ignore, r);
+	int i;
+	for (i = ignore; i < mat->ncols; i++) {
+		row[i] *= k;
+	}
+}
 
 /*** Public Functions ***/
 
@@ -152,9 +199,53 @@ int matT(Matrix *res, const Matrix *mat)
 	return EXIT_SUCCESS;
 }
 
-int rref(Matrix *res, Matrix *mat)
+int rref(Matrix *mat)
 {
-	int rank = -1;
+	double *row, rowi, k, pivot, current;
+	int y, i, next, j = 0, rank = 0;
+
+	/* loop over all rows */
+	for (y = 0; y < mat->nrows; y++) {
+		row = &GET(mat, j, y);
+
+		/* Find the biggest pivot*/
+		LOG_INFO("Finding best pivot...\n");
+		i = y;
+		pivot = *row;
+		for (next = y; next < mat->nrows; next++) {
+			current = GET(mat, j, next);
+			if (fabs(pivot) < fabs(current)) {
+				i = next;
+				pivot = current;
+			}
+		}
+		LOG_DEBUG("Found best pivot in row %d, with value %.2f\n", i, pivot);
+
+		/* Make sure pivot is large enough then reduce pivot to 1*/
+		LOG_INFO("Checking that pivot is bigger than EPSILON...\n");
+		if (fabs(pivot) > EPSILON) {
+			swapRow(mat, y, i, j);
+			k = 1 / pivot;
+			scaleRow(mat, y, k, j);
+		} else {
+			LOG_DEBUG("Row of zero detected, moving on to next column\n");
+			j++;
+			y--;
+			continue;
+		}
+
+		/* Try and reduce all values in col j to 0 except current rows one */
+		LOG_INFO("Reducing current column to zero except for row %d\n", y);
+		for (i = 0; i < mat->nrows; i++) {
+			if (y == i) continue;
+
+			rowi = GET(mat, j, i);
+			scaleAddToRow(mat, i, -rowi , y, j);
+			LOG_DEBUG("r%d = r%d %+.2f*r%d\n", i, i, rowi, y);
+		}
+		LOG_INFO("Finished reducing column %d\n", j);
+		rank++;
+	}
 
 	return rank;
 }
