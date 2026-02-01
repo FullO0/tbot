@@ -8,6 +8,7 @@
 import time
 
 import numpy as np
+import sympy as sp
 
 # Constants
 TEST_DATA_FILE = "./include/test_data_matrix.h"
@@ -22,8 +23,9 @@ INIT = "\n/*** Initialization Test Results ***/\n\n"
 ADDITION = "\n/*** Addition Test Results ***/\n\n"
 MULTIPLICATION = "\n/*** Multiplication Test Results ***/\n\n"
 TRANSPOSE = "\n/*** Transpose Test Results ***/\n\n"
-INVERSE = "\n/*** Inverse Test Results ***/\n\n"
+RANK = "\n/*** Rank Results ***/\n\n"
 RREF = "\n/*** Reduced Row Echolon Form Test Results ***/\n\n"
+INVERSE = "\n/*** Inverse Test Results ***/\n\n"
 
 
 def write_array(file, arr):
@@ -187,6 +189,43 @@ def main():
         f.write("\n")
 
         f.write("const double T_T = " + str(round(t_t, 12)) + ";\n")
+
+        # Matrix ranks and RREF form
+        spmat_A = sp.matrix(mat_A)
+        spmat_B = sp.matrix(mat_B)
+        spmat_C = sp.matrix(mat_C)
+        spmat_D = sp.matrix(mat_D)
+        stime = time.perf_counter()
+        rref_A, rank_A = spmat_A.rref()
+        rref_B, rank_B = spmat_A.rref()
+        rref_C, rank_C = spmat_A.rref()
+        rref_D, rank_D = spmat_A.rref()
+        etime = time.perf_counter()
+        rref_t = etime - stime
+
+        f.write("const int RANK_A = " + str(rank_A) + ";\n")
+        f.write("const int RANK_B = " + str(rank_B) + ";\n")
+        f.write("const int RANK_C = " + str(rank_C) + ";\n")
+        f.write("const int RANK_D = " + str(rank_D) + ";\n")
+
+        f.write("\n")
+
+        f.write("const double RREF_A[] = { ")
+        write_array(f, rrefA.flatten())
+        f.write(" };\n")
+        f.write("const double RREF_B[] = { ")
+        write_array(f, rrefB.flatten())
+        f.write(" };\n")
+        f.write("const double RREF_C[] = { ")
+        write_array(f, rrefC.flatten())
+        f.write(" };\n")
+        f.write("const double RREF_D[] = { ")
+        write_array(f, rrefD.flatten())
+        f.write(" };\n")
+
+        f.write("\n")
+
+        f.write("const double RREF_T = " + str(round(rref_t, 12)) + ";\n")
 
 
 main()

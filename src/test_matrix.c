@@ -74,8 +74,6 @@ int matcmp(const Matrix *mat1, const Matrix *mat2)
 {
 	if ((mat1->nrows != mat2->nrows) || (mat1->ncols != mat2->ncols)) return -1;
 
-	int size = mat1->nrows * mat1->ncols;
-
 	int i, j, cmp;
 	for (i = 0; i < mat1->nrows; i++) {
 		for (j = 0; j < mat1->ncols; j++) {
@@ -198,7 +196,31 @@ int main(void)
 	else if (memcmp(bmatt->vals, MAT_B_T, blen)) { FAIL(amatt, MAT_B_T); }
 	else if (memcmp(bmatt->vals, MAT_B_T, blen)) { FAIL(amatt, MAT_B_T); }
 	else if (memcmp(bmatt->vals, MAT_B_T, blen)) { FAIL(amatt, MAT_B_T); }
-	else                                          { PASS(cdiff); }
+	else                                         { PASS((T_T - cdiff)); }
+
+	/*** RREF and rank ***/
+	Matrix *arref = initmat(amat->nrows, amat->ncols, amat->vals, 1);
+	Matrix *brref = initmat(bmat->nrows, bmat->ncols, bmat->vals, 1);
+	Matrix *crref = initmat(cmat->nrows, cmat->ncols, cmat->vals, 1);
+	Matrix *drref = initmat(dmat->nrows, dmat->ncols, dmat->vals, 1);
+	stime = clock();
+	int arank = rref(arref);
+	int brank = rref(arref);
+	int crank = rref(arref);
+	int drank = rref(arref);
+	etime = clock();
+	cdiff = (etime - stime) / CLOCKS_PER_SEC;
+
+	printf("Testing rank and rref...");
+	if      (arank != RANK_A) { FAIL(NULL, NULL); }
+	else if (brank != RANK_B) { FAIL(NULL, NULL); }
+	else if (brank != RANK_C) { FAIL(NULL, NULL); }
+	else if (brank != RANK_D) { FAIL(NULL, NULL); }
+	else if (memcmp(arref->vals, RREF_A, alen)) { FAIL(arref, RREF_A); }
+	else if (memcmp(brref->vals, RREF_B, blen)) { FAIL(brref, RREF_B); }
+	else if (memcmp(crref->vals, RREF_C, clen)) { FAIL(crref, RREF_C); }
+	else if (memcmp(drref->vals, RREF_D, dlen)) { FAIL(drref, RREF_D); }
+	else                                        { PASS((RREF_T - cdiff)); }
 
 	/*** total ***/
 	printf("%s%d/%d PASSED%s", ASCII_GREEN, npass, npass + nfail, ASCII_RESET);
