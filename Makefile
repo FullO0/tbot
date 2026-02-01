@@ -1,16 +1,16 @@
 
 # compiler flags
 DEBUG     = -ggdb
-OPTIMISE  = -O0
 WARNINGS  = -Wall -Wextra -Wno-variadic-macros -Wno-overlength-strings -pedantic
 REMSRC    = -fmacro-prefix-map=src/=
-CFLAGS    = $(DEBUG) $(OPTIMISE) $(WARNINGS) $(REMSRC)
+CFLAGS    = $(DEBUG) $(WARNINGS) $(REMSRC)
 
 # commands
-CC        = clang
-RM        = rm -f
-COMPILE   = $(CC) $(CFLAGS) $(DFLAGS)
-INSTALL   = install
+CC         = clang
+RM         = rm -f
+COMPILE    = $(CC) $(CFLAGS) $(DFLAGS) -O0
+OCOMPILE   = $(CC) $(CFLAGS) $(DFLAGS) -O3
+INSTALL    = install
 
 # directories
 SRC       = src
@@ -44,7 +44,7 @@ $(BIN)/test_logger: test_logger.c $(addprefix $(BUILD)/, $(LOGGER)) | $(BIN)
 
 $(BIN)/test_matrix: test_matrix.c $(PYTHON_EXE) $(addprefix $(BUILD)/, $(MATRIX)) | $(BIN)
 	$(PYTHON_EXE) $(TEST)/matrix/gen_test_data.py
-	$(COMPILE) -o $@ $^
+	$(OCOMPILE) -o $@ $^
 	$@
 
 # Units
