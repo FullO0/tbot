@@ -30,7 +30,7 @@
 static inline void swapRow(const Matrix *mat, int r1, int r2, int ignore)
 {
 	assert((mat->nrows > r1) && (mat->nrows > r2));
-	assert((r1 >= 0) && (r2 >- 0));
+	assert((r1 >= 0) && (r2 >= 0));
 	if (r1 == r2) return;
 
 	int elements = mat->ncols - ignore;
@@ -47,7 +47,7 @@ static inline void swapRow(const Matrix *mat, int r1, int r2, int ignore)
 static inline void scaleAddToRow(const Matrix *mat, int r1, double k, int r2, int ignore)
 {
 	assert((mat->nrows > r1) && (mat->nrows > r2));
-	assert((r1 >= 0) && (r2 >- 0));
+	assert((r1 >= 0) && (r2 >= 0));
 	assert((r1 != r2));
 
 	double * restrict row1 = &GET(mat, ignore, r1);
