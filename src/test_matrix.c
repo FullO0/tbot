@@ -12,6 +12,8 @@
 #include "../include/test_data_matrix.h" /* run gen_test_data.py to create this */
 #include "../include/error.h"
 
+#include <math.h>
+#include <stdlib.h>
 #include <string.h>
 #include <time.h>
 #include <unistd.h>
@@ -28,6 +30,8 @@ printMat(out, 1); printArrAsMat(exp, out->nrows, out->ncols, 0)
 fprintf(outfptr, "%d\n", out); fprintf(expfptr, "%d\n", exp);
 #define PASS(diff) npass++; printf("%sPASS%s", ASCII_GREEN, ASCII_RESET); \
 printf(" (%s%+.4f%s)\n", (diff >= 0) ? ASCII_GREEN : ASCII_RED, diff, ASCII_RESET)
+
+#define FCMP(f1, f2) ((fabs(f1) - fabs(f2)) < EPSILON)
 
 /*** Globals ***/
 
@@ -72,20 +76,17 @@ void printArrAsMat(const double *arr, int nrows, int ncols, int out)
 	}
 }
 
-int matcmp(const Matrix *mat1, const Matrix *mat2)
+int matcmp(const Matrix *mat1, const double *mat2, int len)
 {
-	if ((mat1->nrows != mat2->nrows) || (mat1->ncols != mat2->ncols)) return -1;
-
-	int i, j, cmp;
+	if (len != (mat1->ncols * mat1->nrows)) return -1;
+	int i, j, idx = 0;
 	for (i = 0; i < mat1->nrows; i++) {
 		for (j = 0; j < mat1->ncols; j++) {
-			if (!(cmp = memcmp(&GET(mat1, j, i), &GET(mat2, j, i), sizeof(double)))) {
-				return cmp;
-			}
+			if (!(FCMP(GET(mat1, j, i), mat2[idx++]))) return 1;
 		}
 	}
 
-	return 0;
+	return EXIT_SUCCESS;
 }
 
 /*** Testing ***/
@@ -116,24 +117,26 @@ int main(void)
 	cdiff = (etime - stime) / CLOCKS_PER_SEC;
 
 	printf("Testing reading in data... ");
-	if      (memcmp(amat->vals, TEST_DATA_A, alen)) { FAIL_MAT_ARR(amat, TEST_DATA_A); }
-	else if (memcmp(bmat->vals, TEST_DATA_B, blen)) { FAIL_MAT_ARR(bmat, TEST_DATA_B); }
-	else if (memcmp(cmat->vals, TEST_DATA_C, clen)) { FAIL_MAT_ARR(cmat, TEST_DATA_C); }
-	else if (memcmp(dmat->vals, TEST_DATA_D, dlen)) { FAIL_MAT_ARR(dmat, TEST_DATA_D); }
-	else                                            { PASS((INIT_T - cdiff)); }
+	if      (matcmp(amat, TEST_DATA_A, alen)) { FAIL_MAT_ARR(amat, TEST_DATA_A); }
+	else if (matcmp(bmat, TEST_DATA_B, blen)) { FAIL_MAT_ARR(bmat, TEST_DATA_B); }
+	else if (matcmp(cmat, TEST_DATA_C, clen)) { FAIL_MAT_ARR(cmat, TEST_DATA_C); }
+	else if (matcmp(dmat, TEST_DATA_D, dlen)) { FAIL_MAT_ARR(dmat, TEST_DATA_D); }
+	else                                      { PASS((INIT_T - cdiff)); }
 
 	stime = clock();
 	Matrix *afmat = initmat(SHAPE_A[0], SHAPE_A[1], TEST_FDATA_A, 0);
 	Matrix *bfmat = initmat(SHAPE_B[0], SHAPE_B[1], TEST_FDATA_B, 0);
 	Matrix *cfmat = initmat(SHAPE_C[0], SHAPE_C[1], TEST_FDATA_C, 0);
+	Matrix *dfmat = initmat(SHAPE_D[0], SHAPE_D[1], TEST_FDATA_D, 0);
 	etime = clock();
 	cdiff = (etime - stime) / CLOCKS_PER_SEC;
 
 	printf("Testing reading in as Column-Major... ");
-	if      (memcmp(afmat->vals, TEST_DATA_A, alen)) { FAIL_MAT_ARR(afmat, TEST_DATA_A); }
-	else if (memcmp(bfmat->vals, TEST_DATA_B, blen)) { FAIL_MAT_ARR(bfmat, TEST_DATA_B); }
-	else if (memcmp(cfmat->vals, TEST_DATA_C, clen)) { FAIL_MAT_ARR(cfmat, TEST_DATA_C); }
-	else                                             { PASS(cdiff); }
+	if      (matcmp(afmat, TEST_DATA_A, alen)) { FAIL_MAT_ARR(afmat, TEST_DATA_A); }
+	else if (matcmp(bfmat, TEST_DATA_B, blen)) { FAIL_MAT_ARR(bfmat, TEST_DATA_B); }
+	else if (matcmp(cfmat, TEST_DATA_C, clen)) { FAIL_MAT_ARR(cfmat, TEST_DATA_C); }
+	else if (matcmp(dfmat, TEST_DATA_D, clen)) { FAIL_MAT_ARR(dfmat, TEST_DATA_D); }
+	else                                       { PASS((INIT_T - cdiff)); }
 
 	/*** addition ***/
 	Matrix *mat_apb, *mat_cpc;
@@ -147,9 +150,9 @@ int main(void)
 	cdiff = (etime - stime) / CLOCKS_PER_SEC;
 
 	printf("Testing addition...");
-	if      (memcmp(mat_apb->vals, MAT_A_P_B, alen)) { FAIL_MAT_ARR(mat_cpc, MAT_A_P_B); }
-	else if (memcmp(mat_cpc->vals, MAT_C_P_C, clen)) { FAIL_MAT_ARR(mat_apb, MAT_C_P_C); }
-	else                                             { PASS(cdiff); }
+	if      (matcmp(mat_apb, MAT_A_P_B, alen)) { FAIL_MAT_ARR(mat_cpc, MAT_A_P_B); }
+	else if (matcmp(mat_cpc, MAT_C_P_C, clen)) { FAIL_MAT_ARR(mat_apb, MAT_C_P_C); }
+	else                                       { PASS((ADD_T - cdiff)); }
 
 	/*** multiplication ***/
 	Matrix *mat_amc = initmat(amat->nrows, cmat->ncols, NULL, 1);
@@ -173,11 +176,11 @@ int main(void)
 	cdiff = (etime - stime) / CLOCKS_PER_SEC;
 
 	printf("Testing multiplication...");
-	if      (memcmp(mat_amc->vals, MAT_A_M_C, aclen)) { FAIL_MAT_ARR(mat_amc, MAT_A_M_C); }
-	else if (memcmp(mat_bmc->vals, MAT_B_M_C, bclen)) { FAIL_MAT_ARR(mat_bmc, MAT_B_M_C); }
-	else if (memcmp(mat_cmd->vals, MAT_C_M_D, cdlen)) { FAIL_MAT_ARR(mat_cmd, MAT_C_M_D); }
-	else if (memcmp(mat_dma->vals, MAT_D_M_A, dalen)) { FAIL_MAT_ARR(mat_dma, MAT_D_M_A); }
-	else if (memcmp(mat_dmb->vals, MAT_D_M_B, dblen)) { FAIL_MAT_ARR(mat_dmb, MAT_D_M_B); }
+	if      (matcmp(mat_amc, MAT_A_M_C, aclen)) { FAIL_MAT_ARR(mat_amc, MAT_A_M_C); }
+	else if (matcmp(mat_bmc, MAT_B_M_C, bclen)) { FAIL_MAT_ARR(mat_bmc, MAT_B_M_C); }
+	else if (matcmp(mat_cmd, MAT_C_M_D, cdlen)) { FAIL_MAT_ARR(mat_cmd, MAT_C_M_D); }
+	else if (matcmp(mat_dma, MAT_D_M_A, dalen)) { FAIL_MAT_ARR(mat_dma, MAT_D_M_A); }
+	else if (matcmp(mat_dmb, MAT_D_M_B, dblen)) { FAIL_MAT_ARR(mat_dmb, MAT_D_M_B); }
 	else                                              { PASS((MUL_T - cdiff)); }
 
 	/*** Transpose ***/
@@ -194,11 +197,11 @@ int main(void)
 	cdiff = (etime - stime) / CLOCKS_PER_SEC;
 
 	printf("Testing transposing...");
-	if      (memcmp(amatt->vals, MAT_A_T, alen)) { FAIL_MAT_ARR(amatt, MAT_A_T); }
-	else if (memcmp(bmatt->vals, MAT_B_T, blen)) { FAIL_MAT_ARR(amatt, MAT_B_T); }
-	else if (memcmp(bmatt->vals, MAT_B_T, blen)) { FAIL_MAT_ARR(amatt, MAT_B_T); }
-	else if (memcmp(bmatt->vals, MAT_B_T, blen)) { FAIL_MAT_ARR(amatt, MAT_B_T); }
-	else                                         { PASS((T_T - cdiff)); }
+	if      (matcmp(amatt, MAT_A_T, alen)) { FAIL_MAT_ARR(amatt, MAT_A_T); }
+	else if (matcmp(bmatt, MAT_B_T, blen)) { FAIL_MAT_ARR(amatt, MAT_B_T); }
+	else if (matcmp(bmatt, MAT_B_T, blen)) { FAIL_MAT_ARR(amatt, MAT_B_T); }
+	else if (matcmp(bmatt, MAT_B_T, blen)) { FAIL_MAT_ARR(amatt, MAT_B_T); }
+	else                                   { PASS((T_T - cdiff)); }
 
 	/*** RREF and rank ***/
 	Matrix *arref = initmat(amat->nrows, amat->ncols, amat->vals, 1);
@@ -221,11 +224,11 @@ int main(void)
 	else                      { PASS((RREF_T - cdiff)); }
 
 	printf("Testing rref...");
-	if      (memcmp(arref->vals, RREF_A, alen)) { FAIL_MAT_ARR(arref, RREF_A); }
-	else if (memcmp(brref->vals, RREF_B, blen)) { FAIL_MAT_ARR(brref, RREF_B); }
-	else if (memcmp(crref->vals, RREF_C, clen)) { FAIL_MAT_ARR(crref, RREF_C); }
-	else if (memcmp(drref->vals, RREF_D, dlen)) { FAIL_MAT_ARR(drref, RREF_D); }
-	else                                        { PASS((RREF_T - cdiff)); }
+	if      (matcmp(arref, RREF_A, alen)) { FAIL_MAT_ARR(arref, RREF_A); }
+	else if (matcmp(brref, RREF_B, blen)) { FAIL_MAT_ARR(brref, RREF_B); }
+	else if (matcmp(crref, RREF_C, clen)) { FAIL_MAT_ARR(crref, RREF_C); }
+	else if (matcmp(drref, RREF_D, dlen)) { FAIL_MAT_ARR(drref, RREF_D); }
+	else                                  { PASS((RREF_T - cdiff)); }
 
 	/*** total ***/
 	printf("%s%d/%d PASSED%s", ASCII_GREEN, npass, npass + nfail, ASCII_RESET);
