@@ -207,18 +207,21 @@ int main(void)
 	Matrix *drref = initmat(dmat->nrows, dmat->ncols, dmat->vals, 1);
 	stime = clock();
 	int arank = rref(arref);
-	int brank = rref(arref);
-	int crank = rref(arref);
-	int drank = rref(arref);
+	int brank = rref(brref);
+	int crank = rref(crref);
+	int drank = rref(drref);
 	etime = clock();
 	cdiff = (etime - stime) / CLOCKS_PER_SEC;
 
-	printf("Testing rank and rref...");
+	printf("Testing rank...");
 	if      (arank != RANK_A) { FAIL_INT(arank, RANK_A); }
 	else if (brank != RANK_B) { FAIL_INT(brank, RANK_B); }
 	else if (brank != RANK_C) { FAIL_INT(crank, RANK_C); }
 	else if (brank != RANK_D) { FAIL_INT(drank, RANK_D); }
-	else if (memcmp(arref->vals, RREF_A, alen)) { FAIL_MAT_ARR(arref, RREF_A); }
+	else                      { PASS((RREF_T - cdiff)); }
+
+	printf("Testing rref...");
+	if      (memcmp(arref->vals, RREF_A, alen)) { FAIL_MAT_ARR(arref, RREF_A); }
 	else if (memcmp(brref->vals, RREF_B, blen)) { FAIL_MAT_ARR(brref, RREF_B); }
 	else if (memcmp(crref->vals, RREF_C, clen)) { FAIL_MAT_ARR(crref, RREF_C); }
 	else if (memcmp(drref->vals, RREF_D, dlen)) { FAIL_MAT_ARR(drref, RREF_D); }

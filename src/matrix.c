@@ -27,45 +27,52 @@
 /*** Helper Functions ***/
 
 /* Row index starts at 0 */
-static inline void swapRow(const Matrix *mat, int r1, int r2, int ignore)
+static inline void swapRow(const Matrix *mat, int r1, int r2)
 {
 	assert((mat->nrows > r1) && (mat->nrows > r2));
 	assert((r1 >= 0) && (r2 >= 0));
 	if (r1 == r2) return;
 
-	int elements = mat->ncols - ignore;
+	int elements = mat->ncols;
 	double temp[elements];
-	double *row1 = &GET(mat, ignore, r1);
-	double *row2 = &GET(mat, ignore, r2);
+	double *row1 = &GET(mat, 0, r1);
+	double *row2 = &GET(mat, 0, r2);
 	size_t copy_size = sizeof(double) * (elements);
 
+	LOG_INFO("Switching row %d with row %d", r1, r2);
 	memcpy(temp, row1, copy_size);
 	memcpy(row1, row2, copy_size);
 	memcpy(row2, temp, copy_size);
 }
 
-static inline void scaleAddToRow(const Matrix *mat, int r1, double k, int r2, int ignore)
+static inline void scaleAddToRow(const Matrix *mat, int r1, double k, int r2)
 {
 	assert((mat->nrows > r1) && (mat->nrows > r2));
 	assert((r1 >= 0) && (r2 >= 0));
 	assert((r1 != r2));
 
-	double * restrict row1 = &GET(mat, ignore, r1);
-	double * restrict row2 = &GET(mat, ignore, r1);
+	double * restrict row1 = &GET(mat, 0, r1);
+	double * restrict row2 = &GET(mat, 0, r2);
 	int i;
-	for (i = ignore; i < mat->ncols; i++) {
+	LOG_INFO("Scaling row %d and adding it to row %d\n", r2, r1);
+	for (i = 0; i < mat->ncols; i++) {
+		LOG_DEBUG("mat(%d,%d) = %.2f + %.2f * %2.f\n", i, r1, row1[i], k, row2[i]);
 		row1[i] += k * row2[i];
+		LOG_DEBUG("mat(%d,%d) = %.2f\n", i, r1, row1[i]);
 	}
 }
 
-static inline void scaleRow(const Matrix *mat, int r, double k, int ignore)
+static inline void scaleRow(const Matrix *mat, int r, double k)
 {
 	assert((mat->nrows > r) && (r >= 0));
 
-	double * restrict row = &GET(mat, ignore, r);
+	double * restrict row = &GET(mat, 0, r);
 	int i;
-	for (i = ignore; i < mat->ncols; i++) {
+	LOG_INFO("Scaling row %d by %.2f\n", r, k);
+	for (i = 0; i < mat->ncols; i++) {
+		LOG_DEBUG("mat(%d,%d) = %.2f * %.2f\n", i, r, k, row[i]);
 		row[i] *= k;
+		LOG_DEBUG("mat(%d,%d) = %.2f\n", i, r, row[i]);
 	}
 }
 
@@ -205,11 +212,12 @@ int rref(Matrix *mat)
 	int y, i, next, j = 0, rank = 0;
 
 	/* loop over all rows */
+	LOG_INFO("Finding rref and rank of Matrix %dx%d\n", mat->nrows, mat->ncols);
 	for (y = 0; y < mat->nrows; y++) {
+		if (j >= mat->ncols) break;
 		row = &GET(mat, j, y);
 
 		/* Find the biggest pivot*/
-		LOG_INFO("Finding best pivot...\n");
 		i = y;
 		pivot = *row;
 		for (next = y; next < mat->nrows; next++) {
@@ -219,14 +227,14 @@ int rref(Matrix *mat)
 				pivot = current;
 			}
 		}
-		LOG_DEBUG("Found best pivot in row %d, with value %.2f\n", i, pivot);
+		LOG_DEBUG("Found best pivot in (%d, %d), with value %.2f\n", j, i, pivot);
 
 		/* Make sure pivot is large enough then reduce pivot to 1*/
-		LOG_INFO("Checking that pivot is bigger than EPSILON...\n");
+		LOG_DEBUG("Checking that pivot is bigger than EPSILON = %f...\n", EPSILON);
 		if (fabs(pivot) > EPSILON) {
-			swapRow(mat, y, i, j);
+			swapRow(mat, y, i);
 			k = 1 / pivot;
-			scaleRow(mat, y, k, j);
+			scaleRow(mat, y, k);
 		} else {
 			LOG_DEBUG("Row of zero detected, moving on to next column\n");
 			j++;
@@ -235,15 +243,17 @@ int rref(Matrix *mat)
 		}
 
 		/* Try and reduce all values in col j to 0 except current rows one */
-		LOG_INFO("Reducing current column to zero except for row %d\n", y);
+		LOG_INFO("Reducing column %d to zero except for row %d column\n", j, y);
 		for (i = 0; i < mat->nrows; i++) {
 			if (y == i) continue;
 
+			LOG_DEBUG("mat(%d,%d) = %.2f\n", j, i, GET(mat, j, i));
 			rowi = GET(mat, j, i);
-			scaleAddToRow(mat, i, -rowi , y, j);
-			LOG_DEBUG("r%d = r%d %+.2f*r%d\n", i, i, rowi, y);
+			LOG_INFO("r%d = r%d - %.2f * r%d\n", i, i, rowi, y);
+			scaleAddToRow(mat, i, -rowi, y);
 		}
 		LOG_INFO("Finished reducing column %d\n", j);
+		j++;
 		rank++;
 	}
 
