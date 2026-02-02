@@ -42,9 +42,10 @@ $(BIN)/test_logger: test_logger.c $(addprefix $(BUILD)/, $(LOGGER)) | $(BIN)
 	$(COMPILE) -o $@ $^
 	$(TEST)/logger/test_logger.sh $(TEST)/logger $@
 
-$(BIN)/test_matrix: test_matrix.c $(PYTHON_EXE) $(addprefix $(BUILD)/, $(MATRIX)) | $(BIN)
-	$(PYTHON_EXE) $(TEST)/matrix/gen_test_data.py
-	$(OCOMPILE) -o $@ $^
+$(BIN)/test_matrix: test_matrix.c test_data_matrix.h $(PYTHON_EXE)\
+                    $(TEST)/matrix/gen_test_data.py \
+                    $(addprefix $(BUILD)/, $(MATRIX)) | $(BIN)
+	$(COMPILE) -o $@ $(filter %.c %.o, $^)
 	$@
 
 # Units
@@ -55,7 +56,12 @@ $(BUILD)/logging.o: logging.c error.h | $(BUILD)
 	$(COMPILE) -c $< -o $@
 
 $(BUILD)/matrix.o: matrix.c matrix.h error.h logging.h | $(BUILD)
-	$(COMPILE) -c $< -o $@
+	$(OCOMPILE) -c $< -o $@
+
+$(INCLUDE)/test_data_matrix.h: FORCE
+	$(PYTHON_EXE) $(TEST)/matrix/gen_test_data.py
+
+FORCE:
 
 # PYTHON
 
