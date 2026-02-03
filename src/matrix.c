@@ -93,10 +93,6 @@ Matrix *initmat(int nrows, int ncols, const double *data, int byrow)
 	double *vals = malloc(bsize);
 	if (!vals) { free(mat); DIE("malloc"); }
 
-	/* Allocate Memory for the row pointer array */
-	double **rows = malloc(nrows * sizeof(double*));
-	if (!rows) { free(mat); free(vals); DIE("malloc"); }
-
 	mat->ncols = ncols;
 	mat->nrows = nrows;
 
@@ -260,4 +256,9 @@ int rref(Matrix *mat)
 	}
 
 	return rank;
+}
+
+int solve(const Matrix *mat, double *res, const double *vec)
+{
+	return EXIT_SUCCESS;
 }
