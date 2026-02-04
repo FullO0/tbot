@@ -1,8 +1,6 @@
 # Tbot
 This project is for me to learn how to build a crypto trader bot using automation and predifined strategies. I also want to train a trader bot using diffrent methods, for now only Linear regression but I might add more ways to do that in the future.
 
-temp
-
 ### Planned Features
  - [ ] Needs to read in Crypto and Stock data ands store it somewhere in the computer.
  - [ ] Needs matrix algebra e.g Inverse, Conditional Inverse, Rank, Multiplication, Addition / Subtraction and so forth.
