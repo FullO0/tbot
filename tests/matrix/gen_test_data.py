@@ -45,10 +45,10 @@ def main():
         shape_B = shape_A
         shape_C = (shape_A[1], 3)
         shape_D = (shape_C[1], shape_A[0])
-        data_A = rng.integers(0, 100, shape_A[0] * shape_A[1])
-        data_B = rng.integers(0, 100, shape_B[0] * shape_B[1])
-        data_C = rng.integers(0, 100, shape_C[0] * shape_C[1])
-        data_D = rng.integers(0, 100, shape_D[0] * shape_D[1])
+        data_A = rng.integers(-50, 50, shape_A[0] * shape_A[1])
+        data_B = rng.integers(-50, 50, shape_B[0] * shape_B[1])
+        data_C = rng.integers(-50, 50, shape_C[0] * shape_C[1])
+        data_D = rng.integers(-50, 50, shape_D[0] * shape_D[1])
 
         # Turn data into a matrix
         stime = time.perf_counter()
