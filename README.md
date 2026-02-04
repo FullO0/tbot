@@ -11,3 +11,4 @@ This project is for me to learn how to build a crypto trader bot using automatio
 ### Prerequisites
  - Clang Compiler
  - Make
+ - compiledb

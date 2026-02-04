@@ -7,8 +7,8 @@
 
 /*** Includes ***/
 
-#include "../include/logging.h"
-#include "../include/error.h"
+#include "logging.h"
+#include "error.h"
 
 /*** System Includes ***/
 
@@ -45,7 +45,6 @@ void initLogFile(void)
 		logfd = STDERR_FILENO;
 	}
 	isOpen = 1;
-	LOG_INFO("Starting Tbot Log Session...\n");
 }
 
 void closeLogFile(void)

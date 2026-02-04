@@ -8,7 +8,7 @@
 
 /*** includes ***/
 
-#include "../include/logging.h"
+#include "logging.h"
 
 #include <stdio.h>
 #include <stdlib.h>

@@ -7,10 +7,10 @@
 
 /*** Includes ***/
 
-#include "../include/matrix.h"
-#include "../include/logging.h"
-#include "../include/test_data_matrix.h" /* run gen_test_data.py to create this */
-#include "../include/error.h"
+#include "matrix.h"
+#include "logging.h"
+#include "test_data_matrix.h" /* run gen_test_data.py to create this */
+#include "error.h"
 
 #include <math.h>
 #include <stdlib.h>

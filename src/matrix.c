@@ -7,9 +7,9 @@
 
 /*** Includes ***/
 
-#include "../include/matrix.h"
-#include "../include/error.h"
-#include "../include/logging.h"
+#include "matrix.h"
+#include "error.h"
+#include "logging.h"
 
 /*** System Includes ***/
 
@@ -260,5 +260,9 @@ int rref(Matrix *mat)
 
 int solve(const Matrix *mat, double *res, const double *vec)
 {
+	Matrix *LU = initmat(mat->nrows, mat->ncols, mat->vals, 1);
+
+
+	freemat(LU);
 	return EXIT_SUCCESS;
 }

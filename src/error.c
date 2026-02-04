@@ -7,7 +7,7 @@
 
 /*** Includes ***/
 
-#include "../include/error.h"
+#include "error.h"
 
 #include <errno.h>
 #include <stdio.h>
