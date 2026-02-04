@@ -96,6 +96,9 @@ def main():
         f.write("const double TEST_FDATA_C[] = { ")
         write_array(f, mat_C.flatten("F"))
         f.write(" };\n")
+        f.write("const double TEST_FDATA_D[] = { ")
+        write_array(f, mat_D.flatten("F"))
+        f.write(" };\n")
 
         # Matrix init testing
         f.write(INIT)
