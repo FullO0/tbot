@@ -248,7 +248,7 @@ int rref(Matrix *mat)
 			LOG_DEBUG("mat(%d,%d) = %.2f\n", j, i, GET(mat, j, i));
 			rowi = GET(mat, j, i);
 			LOG_INFO("r%d = r%d - %.2f * r%d\n", i, i, rowi, y);
-			scaleAddToRow(mat, i, -rowi, y, 0);
+			scaleAddToRow(mat, i, -rowi, y, j);
 		}
 		LOG_INFO("Finished reducing column %d\n", j);
 		j++;
