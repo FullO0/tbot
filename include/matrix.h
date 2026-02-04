@@ -114,7 +114,8 @@ int rref(Matrix *max);
 
 /**
  * Solves the equation Ax = y for y
- * where A:mxn x:nx1 y:nx1
+ * where A:nxn non-singular matrix
+ * x:nx1 y:nx1
  * Uses LU Decomposition
  *
  * @param[in] mat
@@ -127,7 +128,24 @@ int rref(Matrix *max);
  *     Returns 0 on success
  *     Anything less than 0 for an error
  */
-int solve(const Matrix *mat, double *res, const double *vec);
+int solve_nxn(const Matrix *mat, double *res, const double *vec);
+
+/**
+ * Solves the equation Ax = y for y
+ * where A:mxn non-singular x:nx1 y:mx1
+ * Uses LU Decomposition
+ *
+ * @param[in] mat
+ *     The A matrix
+ * @param[in] vec
+ *     The y vector
+ * @param[in] res
+ *     The x vector to be solved
+ * @return
+ *     Returns 0 on success
+ *     Anything less than 0 for an error
+ */
+int solve_mxn(const Matrix *mat, double *res, const double *vec);
 
 /**
  * Get the inverse of a Matrix

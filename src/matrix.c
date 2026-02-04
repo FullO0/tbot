@@ -26,6 +26,32 @@
 
 /*** Helper Functions ***/
 
+#ifdef DEBUG
+
+#define LOGMAT(mat) logmat(mat)
+void logmat(const Matrix *mat)
+{
+	int i, j, idx;
+	size_t mlen = mat->ncols * 15 + 5;
+	char buf[mlen];
+	char num[11];
+
+	idx = 0;
+	for (j = 0; j < mat->nrows; j++) {
+		snprintf(buf, sizeof(buf), " [");
+		for (i = 0; i < mat->ncols; i++) {
+			snprintf(num, sizeof(num), " %.6g, ", mat->vals[idx++]);
+			strcat(buf, num);
+		}
+		LOG_DEBUG("%s ]\n", buf);
+	}
+}
+
+#else
+#define LOGMAT(mat)
+#endif
+
+
 /* Row index starts at 0 */
 static inline void swapRow(const Matrix *mat, int r1, int r2, int from)
 {
@@ -206,11 +232,13 @@ int matT(Matrix *res, const Matrix *mat)
 
 int rref(Matrix *mat)
 {
+	LOG_INFO("Finding rref and rank of Matrix %dx%d\n", mat->nrows, mat->ncols);
+	LOGMAT(mat);
+
 	double *row, rowi, k, pivot, current;
 	int y, i, next, j = 0, rank = 0;
 
 	/* loop over all rows */
-	LOG_INFO("Finding rref and rank of Matrix %dx%d\n", mat->nrows, mat->ncols);
 	for (y = 0; y < mat->nrows; y++) {
 		if (j >= mat->ncols) break;
 		row = &GET(mat, j, y);
@@ -260,8 +288,49 @@ int rref(Matrix *mat)
 
 int solve(const Matrix *mat, double *res, const double *vec)
 {
-	Matrix *LU = initmat(mat->nrows, mat->ncols, mat->vals, 1);
+	LOG_INFO("Solve square matrix %dx%d using LU decomposition\n", mat->nrows, mat->ncols);
+	LOGMAT(mat);
+	assert(mat->nrows == mat->ncols);
 
+	double *row, rowi, k, pivot, current;
+	int y, x = 0, i, next;
+
+	/* Store L and U together with implicit diagonal 1 for L */
+	Matrix *LU = initmat(mat->nrows, mat->ncols, mat->vals, 1);
+	if (!LU) return EXIT_FAILURE;
+
+	/* My Pivot vector to keep track of the swaps */
+	int *pivots = malloc(sizeof(size_t) * mat->nrows);
+	if (!pivots) { freemat(LU); return EXIT_FAILURE;}
+
+	/* Form the L and U matrices */
+	for (y = 0; y < LU->nrows; y++) {
+
+		/* Find the biggest pivot*/
+		i = y;
+		pivot = GET(LU, x, y);
+		for (next = y; next < mat->nrows; next++) {
+			current = GET(LU, x, next);
+			if (fabs(pivot) < fabs(current)) {
+				i = next;
+				pivot = current;
+			}
+		}
+		LOG_DEBUG("Found best pivot in (%d, %d), with value %.2f\n", x, i, pivot);
+
+		/* Make sure pivot is large enough then reduce pivot to 1*/
+		LOG_DEBUG("Checking that pivot is bigger than EPSILON = %f...\n", EPSILON);
+		if (fabs(pivot) > EPSILON) {
+			pivots[y] = i;
+			swapRow(mat, y, i, x);
+			k = 1 / pivot;
+		} else {
+			LOG_WARN("zero pivot detected, singular matrix, decomposition won't work\n");
+			return EXIT_FAILURE;
+		}
+
+		/* Reduce U with row operation and set L element */
+	}
 
 	freemat(LU);
 	return EXIT_SUCCESS;
