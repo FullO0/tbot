@@ -26,7 +26,9 @@
 
 #define FAIL_MAT_ARR(out, exp) nfail++; printf("%sFAIL%s\n", ASCII_RED, ASCII_RESET); \
 printMat(out, 1); printArrAsMat(exp, out->nrows, out->ncols, 0)
-#define FAIL_INT(out, exp) nfail++; printf("%sFAIL%s\n", ASCII_RED, ASCII_RESET); \
+#define FAIL_ARR_ARR(out, exp, len) nfail++; printf("%sFAIL%s\n", ASCII_RED, ASCII_RESET); \
+printarr(out, len, 1); printarr(exp, len, 0)
+#define FAIL_INT_INT(out, exp) nfail++; printf("%sFAIL%s\n", ASCII_RED, ASCII_RESET); \
 fprintf(outfptr, "%d\n", out); fprintf(expfptr, "%d\n", exp);
 #define PASS(diff) npass++; printf("%sPASS%s", ASCII_GREEN, ASCII_RESET); \
 printf(" (%s%+.4f%s)\n", (diff >= 0) ? ASCII_GREEN : ASCII_RED, diff, ASCII_RESET)
@@ -39,6 +41,22 @@ static FILE *outfptr;
 static FILE *expfptr;
 
 /*** Helper Functions ***/
+
+void printarr(const double *arr, int len, int out)
+{
+	FILE *f;
+	if (out) {
+		f = outfptr;
+	} else {
+		f = expfptr;
+	}
+
+	int i;
+	fprintf(f, "Array len: %d", len);
+	for (i = 0; i < len; i++) {
+		fprintf(f, " %.2f ", arr[i]);
+	}
+}
 
 void printMat(const Matrix *mat, int out)
 {
@@ -107,12 +125,16 @@ int main(void)
 	int blen = SHAPE_B[0] * SHAPE_B[1];
 	int clen = SHAPE_C[0] * SHAPE_C[1];
 	int dlen = SHAPE_D[0] * SHAPE_D[1];
+	int elen = SHAPE_E[0] * SHAPE_E[1];
+	int flen = SHAPE_F[0] * SHAPE_F[1];
 
 	stime = clock();
 	Matrix *amat = initmat(SHAPE_A[0], SHAPE_A[1], TEST_DATA_A, 1);
 	Matrix *bmat = initmat(SHAPE_B[0], SHAPE_B[1], TEST_DATA_B, 1);
 	Matrix *cmat = initmat(SHAPE_C[0], SHAPE_C[1], TEST_DATA_C, 1);
 	Matrix *dmat = initmat(SHAPE_D[0], SHAPE_D[1], TEST_DATA_D, 1);
+	Matrix *emat = initmat(SHAPE_E[0], SHAPE_E[1], TEST_DATA_E, 1);
+	Matrix *fmat = initmat(SHAPE_F[0], SHAPE_F[1], TEST_DATA_F, 1);
 	etime = clock();
 	cdiff = (etime - stime) / CLOCKS_PER_SEC;
 
@@ -121,6 +143,8 @@ int main(void)
 	else if (matcmp(bmat, TEST_DATA_B, blen)) { FAIL_MAT_ARR(bmat, TEST_DATA_B); }
 	else if (matcmp(cmat, TEST_DATA_C, clen)) { FAIL_MAT_ARR(cmat, TEST_DATA_C); }
 	else if (matcmp(dmat, TEST_DATA_D, dlen)) { FAIL_MAT_ARR(dmat, TEST_DATA_D); }
+	else if (matcmp(emat, TEST_DATA_E, elen)) { FAIL_MAT_ARR(emat, TEST_DATA_E); }
+	else if (matcmp(fmat, TEST_DATA_F, flen)) { FAIL_MAT_ARR(fmat, TEST_DATA_F); }
 	else                                      { PASS((INIT_T - cdiff)); }
 
 	stime = clock();
@@ -128,6 +152,8 @@ int main(void)
 	Matrix *bfmat = initmat(SHAPE_B[0], SHAPE_B[1], TEST_FDATA_B, 0);
 	Matrix *cfmat = initmat(SHAPE_C[0], SHAPE_C[1], TEST_FDATA_C, 0);
 	Matrix *dfmat = initmat(SHAPE_D[0], SHAPE_D[1], TEST_FDATA_D, 0);
+	Matrix *efmat = initmat(SHAPE_E[0], SHAPE_E[1], TEST_FDATA_E, 0);
+	Matrix *ffmat = initmat(SHAPE_F[0], SHAPE_F[1], TEST_FDATA_F, 0);
 	etime = clock();
 	cdiff = (etime - stime) / CLOCKS_PER_SEC;
 
@@ -136,6 +162,8 @@ int main(void)
 	else if (matcmp(bfmat, TEST_DATA_B, blen)) { FAIL_MAT_ARR(bfmat, TEST_DATA_B); }
 	else if (matcmp(cfmat, TEST_DATA_C, clen)) { FAIL_MAT_ARR(cfmat, TEST_DATA_C); }
 	else if (matcmp(dfmat, TEST_DATA_D, clen)) { FAIL_MAT_ARR(dfmat, TEST_DATA_D); }
+	else if (matcmp(efmat, TEST_DATA_E, elen)) { FAIL_MAT_ARR(efmat, TEST_DATA_E); }
+	else if (matcmp(ffmat, TEST_DATA_F, flen)) { FAIL_MAT_ARR(ffmat, TEST_DATA_F); }
 	else                                       { PASS((INIT_T - cdiff)); }
 
 	/*** addition ***/
@@ -217,10 +245,10 @@ int main(void)
 	cdiff = (etime - stime) / CLOCKS_PER_SEC;
 
 	printf("Testing rank...");
-	if      (arank != RANK_A) { FAIL_INT(arank, RANK_A); }
-	else if (brank != RANK_B) { FAIL_INT(brank, RANK_B); }
-	else if (brank != RANK_C) { FAIL_INT(crank, RANK_C); }
-	else if (brank != RANK_D) { FAIL_INT(drank, RANK_D); }
+	if      (arank != RANK_A) { FAIL_INT_INT(arank, RANK_A); }
+	else if (brank != RANK_B) { FAIL_INT_INT(brank, RANK_B); }
+	else if (brank != RANK_C) { FAIL_INT_INT(crank, RANK_C); }
+	else if (brank != RANK_D) { FAIL_INT_INT(drank, RANK_D); }
 	else                      { PASS((RREF_T - cdiff)); }
 
 	printf("Testing rref...");
@@ -229,6 +257,26 @@ int main(void)
 	else if (matcmp(crref, RREF_C, clen)) { FAIL_MAT_ARR(crref, RREF_C); }
 	else if (matcmp(drref, RREF_D, dlen)) { FAIL_MAT_ARR(drref, RREF_D); }
 	else                                  { PASS((RREF_T - cdiff)); }
+
+	/*** Testing solving nxn non-singular matrix ***/
+	int velen = SHAPE_E[0];
+	int vflen = SHAPE_F[0];
+	double *esol = malloc(sizeof(double) * velen);
+	double *fsol = malloc(sizeof(double) * vflen);
+	if (!esol || !fsol) DIE("malloc");
+
+	stime = clock();
+	int einv = solve_nxn(emat, esol, TEST_VEC_E);
+	int finv = solve_nxn(fmat, fsol, TEST_VEC_F);
+	etime = clock();
+	cdiff = (etime - stime) / CLOCKS_PER_SEC;
+
+	printf("Testing nxn non-singular Ax=y solving for x...");
+	if      (einv == CAN_INV_E)              { FAIL_INT_INT(einv, CAN_INV_E); }
+	else if (finv == CAN_INV_F)              { FAIL_INT_INT(finv, CAN_INV_F); }
+	else if (memcmp(esol, SOL_VEC_E, velen)) { FAIL_ARR_ARR(esol, SOL_VEC_E, velen); }
+	else if (memcmp(fsol, SOL_VEC_F, vflen)) { FAIL_ARR_ARR(fsol, SOL_VEC_F, vflen); }
+	else                                     { PASS((NXNSOLVE_T - cdiff)); }
 
 	/*** total ***/
 	printf("%s%d/%d PASSED%s", ASCII_GREEN, npass, npass + nfail, ASCII_RESET);

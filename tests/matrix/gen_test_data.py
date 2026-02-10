@@ -45,10 +45,16 @@ def main():
         shape_B = shape_A
         shape_C = (shape_A[1], 3)
         shape_D = (shape_C[1], shape_A[0])
+        shape_E = (shape_C[1], shape_C[1])
+        shape_F = (shape_C[0], shape_C[0])
+        vec_E = rng.integers(-50, 50, shape_C[1])
+        vec_F = rng.integers(-50, 50, shape_C[0])
         data_A = rng.integers(-50, 50, shape_A[0] * shape_A[1])
         data_B = rng.integers(-50, 50, shape_B[0] * shape_B[1])
         data_C = rng.integers(-50, 50, shape_C[0] * shape_C[1])
         data_D = rng.integers(-50, 50, shape_D[0] * shape_D[1])
+        data_E = rng.integers(-50, 50, shape_E[0] * shape_E[1])
+        data_F = rng.integers(-50, 50, shape_F[0] * shape_F[1])
 
         # Turn data into a matrix
         stime = time.perf_counter()
@@ -56,6 +62,8 @@ def main():
         mat_B = np.ndarray(shape_B, data_B.dtype, data_B)
         mat_C = np.ndarray(shape_C, data_C.dtype, data_C)
         mat_D = np.ndarray(shape_D, data_D.dtype, data_D)
+        mat_E = np.ndarray(shape_E, data_E.dtype, data_E)
+        mat_F = np.ndarray(shape_F, data_F.dtype, data_F)
         init_t = time.perf_counter() - stime
 
         # Write data to header file
@@ -68,6 +76,10 @@ def main():
         f.write(str(shape_C[0]) + ", " + str(shape_C[1]) + " };\n")
         f.write("const int SHAPE_D[] = { ")
         f.write(str(shape_D[0]) + ", " + str(shape_D[1]) + " };\n")
+        f.write("const int SHAPE_E[] = { ")
+        f.write(str(shape_E[0]) + ", " + str(shape_E[1]) + " };\n")
+        f.write("const int SHAPE_F[] = { ")
+        f.write(str(shape_F[0]) + ", " + str(shape_F[1]) + " };\n")
 
         f.write("\n")
 
@@ -82,6 +94,12 @@ def main():
         f.write(" };\n")
         f.write("const double TEST_DATA_D[] = { ")
         write_array(f, data_D)
+        f.write(" };\n")
+        f.write("const double TEST_DATA_E[] = { ")
+        write_array(f, data_E)
+        f.write(" };\n")
+        f.write("const double TEST_DATA_F[] = { ")
+        write_array(f, data_F)
         f.write(" };\n")
 
         f.write("\n")
@@ -98,6 +116,12 @@ def main():
         f.write(" };\n")
         f.write("const double TEST_FDATA_D[] = { ")
         write_array(f, mat_D.flatten("F"))
+        f.write(" };\n")
+        f.write("const double TEST_FDATA_E[] = { ")
+        write_array(f, mat_E.flatten("F"))
+        f.write(" };\n")
+        f.write("const double TEST_FDATA_F[] = { ")
+        write_array(f, mat_F.flatten("F"))
         f.write(" };\n")
 
         # Matrix init testing
@@ -229,6 +253,43 @@ def main():
         f.write("\n")
 
         f.write("const double RREF_T = " + str(round(rref_t, 12)) + ";\n")
+
+        # nxn non-singular solvers for Ax=y
+        non_singular_E = int(shape_E[0] == np.linalg.matrix_rank(mat_E))
+        non_singular_F = int(shape_F[0] == np.linalg.matrix_rank(mat_F))
+
+        stime = time.perf_counter()
+        E_x = np.linalg.solve(mat_E, vec_E)
+        F_x = np.linalg.solve(mat_F, vec_F)
+        etime = time.perf_counter()
+        nnsolve = etime - stime
+
+        f.write("\n")
+
+        f.write("const int CAN_INV_E = " + str(non_singular_E) + ";\n")
+        f.write("const int CAN_INV_F = " + str(non_singular_F) + ";\n")
+
+        f.write("\n")
+
+        f.write("const double TEST_VEC_E[] = { ")
+        write_array(f, vec_E)
+        f.write(" };\n")
+        f.write("const double TEST_VEC_F[] = { ")
+        write_array(f, vec_F)
+        f.write(" };\n")
+
+        f.write("\n")
+
+        f.write("const double SOL_VEC_E[] = { ")
+        write_array(f, E_x)
+        f.write(" };\n")
+        f.write("const double SOL_VEC_F[] = { ")
+        write_array(f, F_x)
+        f.write(" };\n")
+
+        f.write("\n")
+
+        f.write("const double NXNSOLVE_T = " + str(round(nnsolve, 12)) + ";\n")
 
 
 main()

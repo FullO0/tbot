@@ -286,7 +286,7 @@ int rref(Matrix *mat)
 	return rank;
 }
 
-int solve(const Matrix *mat, double *res, const double *vec)
+int solve_nxn(const Matrix *mat, double *res, const double *vec)
 {
 	LOG_INFO("Solve square matrix %dx%d using LU decomposition\n", mat->nrows, mat->ncols);
 	LOGMAT(mat);

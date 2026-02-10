@@ -58,6 +58,9 @@ $(BIN)/test_matrix: test_matrix.c $(TEST)/matrix/gen_test_data.py \
                     $(addprefix $(BUILD)/, $(MATRIX)) | $(BIN)
 	$(COMPILE) -o $@ $(filter %.c %.o, $^)
 
+$(BIN):
+	@mkdir -p bin
+
 # Units
 $(BUILD)/error.o: error.c error.h | $(BUILD)
 	$(COMPILE) -c $< -o $@
@@ -67,6 +70,9 @@ $(BUILD)/logging.o: logging.c error.h | $(BUILD)
 
 $(BUILD)/matrix.o: matrix.c matrix.h error.h logging.h | $(BUILD)
 	$(COMPILE) -c $< -o $@
+
+$(BUILD):
+	@mkdir -p build
 
 # Extras
 $(INCLUDE)/test_data_matrix.h: FORCE
@@ -83,7 +89,7 @@ $(PYTHON_EXE):
 	@exit 1
 
 setup_venv:
-	python -m venv .venv
+	python3 -m venv .venv
 	$(PYTHON_EXE) -m pip install -r requirements.txt
 
 # PHONY Targets
