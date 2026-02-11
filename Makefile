@@ -54,7 +54,7 @@ $(BIN)/test_error: test_error.c $(addprefix $(BUILD)/, $(ERROR)) | $(BIN)
 $(BIN)/test_logger: test_logger.c $(addprefix $(BUILD)/, $(LOGGER)) | $(BIN)
 	$(COMPILE) -o $@ $^
 
-$(BIN)/test_matrix: test_matrix.c $(TEST)/matrix/gen_test_data.py \
+$(BIN)/test_matrix: test_matrix.c  $(INCLUDE)/test_data_matrix.h \
                     $(addprefix $(BUILD)/, $(MATRIX)) | $(BIN)
 	$(COMPILE) -o $@ $(filter %.c %.o, $^)
 
@@ -75,20 +75,21 @@ $(BUILD):
 	@mkdir -p build
 
 # Extras
-$(INCLUDE)/test_data_matrix.h: FORCE
+$(INCLUDE)/test_data_matrix.h: $(TEST)/matrix/gen_test_data.py $(PYTHON_EXE)
 	$(PYTHON_EXE) $(TEST)/matrix/gen_test_data.py
-
-FORCE:
 
 # PYTHON
 PYTHON_EXE=.venv/bin/python
+VENV_EXISTS = $(wildcard $(PYTHON_EXE))
 
 $(PYTHON_EXE):
-	@echo "ERROR: can't find Venv Python executable!"
-	@echo "Please run: make setup_venv!"
-	@exit 1
+ifeq ($(VENV_EXISTS),)
+	@echo "Venv not found. Setting it up now..."
+	make setup_venv
+endif
 
 setup_venv:
+	@command -v python3 >/dev/null 2>&1 || { echo "python3 not found. Please install it."; exit 1; }
 	python3 -m venv .venv
 	$(PYTHON_EXE) -m pip install -r requirements.txt
 
