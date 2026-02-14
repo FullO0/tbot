@@ -271,7 +271,7 @@ int main(void)
 	etime = clock();
 	cdiff = (etime - stime) / CLOCKS_PER_SEC;
 
-	printf("Testing nxn non-singular Ax=y solving for x...");
+	printf("Testing non-singular Ax=y solving for x...");
 	if      (einv == CAN_INV_E)              { FAIL_INT_INT(einv, CAN_INV_E); }
 	else if (finv == CAN_INV_F)              { FAIL_INT_INT(finv, CAN_INV_F); }
 	else if (memcmp(esol, SOL_VEC_E, velen)) { FAIL_ARR_ARR(esol, SOL_VEC_E, velen); }

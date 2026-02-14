@@ -114,12 +114,17 @@ int rref(Matrix *max);
 
 /**
  * Solves the equation Ax = y for y
- * where A:nxn non-singular matrix
+ * where A is non-singular
  * x:nx1 y:nx1
  * Uses LU Decomposition
  *
  * @param[in] mat
  *     The A matrix
+ * @param[in] lu
+ *     NULL if you don't care that I use malloc to
+ *     allocate space for the LU decomosition matrix
+ *     If you do care give me a pointer to an deep copy
+ *     of mat, I assume its a deepcopy
  * @param[in] vec
  *     The y vector
  * @param[in] res
@@ -128,7 +133,7 @@ int rref(Matrix *max);
  *     Returns 0 on success
  *     Anything less than 0 for an error
  */
-int solve_nxn(const Matrix *mat, double *res, const double *vec);
+int solinv(const Matrix *mat, Matrix *lu, double *res, const double *vec);
 
 /**
  * Solves the equation Ax = y for y
@@ -145,7 +150,7 @@ int solve_nxn(const Matrix *mat, double *res, const double *vec);
  *     Returns 0 on success
  *     Anything less than 0 for an error
  */
-int solve_mxn(const Matrix *mat, double *res, const double *vec);
+int solgen(const Matrix *mat, double *res, const double *vec);
 
 /**
  * Get the inverse of a Matrix

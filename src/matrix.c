@@ -51,6 +51,13 @@ void logmat(const Matrix *mat)
 #define LOGMAT(mat)
 #endif
 
+/* Decomposes a into a new matrix using lu */
+int _LU_decomposition(const Matrix *mat, Matrix *lu)
+{
+	return EXIT_SUCCESS;
+}
+
+/*** Row Operations ***/
 
 /* Row index starts at 0 */
 static inline void swapRow(const Matrix *mat, int r1, int r2, int from)
@@ -286,31 +293,33 @@ int rref(Matrix *mat)
 	return rank;
 }
 
-int solve_nxn(const Matrix *mat, double *res, const double *vec)
+int solinv(const Matrix *mat, Matrix *lu, double *res, const double *vec)
 {
-	LOG_INFO("Solve square matrix %dx%d using LU decomposition\n", mat->nrows, mat->ncols);
+	LOG_INFO("Solve A:%dx%d Ax=y for x, using LU decomposition\n", mat->nrows, mat->ncols);
 	LOGMAT(mat);
 	assert(mat->nrows == mat->ncols);
+	assert((mat != lu) && ((lu ? lu->vals : NULL) != mat->vals));
 
 	double *row, rowi, k, pivot, current;
-	int y, x = 0, i, next;
+	int y, x = 0, i, next, luf;
 
 	/* Store L and U together with implicit diagonal 1 for L */
-	Matrix *LU = initmat(mat->nrows, mat->ncols, mat->vals, 1);
-	if (!LU) return EXIT_FAILURE;
+	luf = !lu;
+	if (!lu) lu = initmat(mat->nrows, mat->ncols, mat->vals, 1);
+	if (!lu) return EXIT_FAILURE;
 
 	/* My Pivot vector to keep track of the swaps */
 	int *pivots = malloc(sizeof(size_t) * mat->nrows);
-	if (!pivots) { freemat(LU); return EXIT_FAILURE;}
+	if (!pivots) { freemat(lu); return EXIT_FAILURE;}
 
 	/* Form the L and U matrices */
-	for (y = 0; y < LU->nrows; y++) {
+	for (y = 0; y < lu->nrows; y++) {
 
 		/* Find the biggest pivot*/
 		i = y;
-		pivot = GET(LU, x, y);
+		pivot = GET(lu, x, y);
 		for (next = y; next < mat->nrows; next++) {
-			current = GET(LU, x, next);
+			current = GET(lu, x, next);
 			if (fabs(pivot) < fabs(current)) {
 				i = next;
 				pivot = current;
@@ -332,6 +341,6 @@ int solve_nxn(const Matrix *mat, double *res, const double *vec)
 		/* Reduce U with row operation and set L element */
 	}
 
-	freemat(LU);
+	if (!luf) freemat(lu);
 	return EXIT_SUCCESS;
 }
